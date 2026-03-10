@@ -1,6 +1,6 @@
 from collections import UserDict
 from datetime import datetime, date, timedelta
-import pickle
+import pickle, re
 
 # Класи 
 class Field:
@@ -13,7 +13,24 @@ class Field:
 
 class Name(Field):
     pass
+# ------------- РОЗШИРЕННЯ АДРЕСНОЇ КНИГИ-----------------
+# _____________________________________________________________________
+""" Додано клас Adress """
+class Address(Field):
+    def __init__(self, value: str):
+        if not isinstance(value, str) or not value.strip():  # Базова перевірка: не порожній рядок
+            raise ValueError("Адресса не повинна бути порожньою")
+        super().__init__(value)
 
+class Email(Field):
+    def __init__(self, value: str):
+        #-------- Валідація формату email за допомогою regex
+        email_regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        if not re.match(email_regex, value):
+            raise ValueError("Invalid email format. Use example@domain.com")
+        super().__init__(value)
+
+# _________________________________________________________________________
 
 class Phone(Field):
     def __init__(self, value):
