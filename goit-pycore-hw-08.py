@@ -14,7 +14,7 @@ class Field:
 class Name(Field):
     pass
 # ------------- РОЗШИРЕННЯ АДРЕСНОЇ КНИГИ-----------------
-# _____________________________________________________________________
+
 """ Додано клас Adress """
 class Address(Field):
     def __init__(self, value: str):
@@ -22,6 +22,7 @@ class Address(Field):
             raise ValueError("Адресса не повинна бути порожньою")
         super().__init__(value)
 
+""" Додано клас Email """
 class Email(Field):
     def __init__(self, value: str):
         #-------- Валідація формату email за допомогою regex
@@ -30,7 +31,6 @@ class Email(Field):
             raise ValueError("Invalid email format. Use example@domain.com")
         super().__init__(value)
 
-# _________________________________________________________________________
 
 class Phone(Field):
     def __init__(self, value):
@@ -60,6 +60,10 @@ class Record:
         self.phones: list[Phone] = []
     # Додане поле birthday для дня народження в клас Record, клас Birthday
         self.birthday: Birthday | None = None
+    # Додане поле для адреси 
+        self.address: Address | None = None
+    # Додане поле для email
+        self.email: Email | None = None    
 
     def add_phone(self, phone_number: str) -> None:
         self.phones.append(Phone(phone_number))
@@ -83,12 +87,23 @@ class Record:
             if phone.value == phone_number:
                 return phone
         return None
+    
 # -- додано add_birthday, яка додає день народження до контакту.
     def add_birthday(self, birthday_str: str) -> None:
         self.birthday = Birthday(birthday_str)
 
+    # Додано метод для додавання адреси та email
+    def add_address(self, address_str: str) -> None:
+        self.address = Address(address_str)
+
+    # Додано метод для додавання адреси та email
+    def add_email(self, email_str: str) -> None:
+        self.email = Email(email_str)
+
     def __str__(self):
         phones = ", ".join(p.value for p in self.phones) if self.phones else "no phones"
+        bday = f", birthday: {self.birthday}" if self.birthday else ""
+        em = f", email: {self.email}" if self.email else ""
         bday = f", birthday: {self.birthday}" if self.birthday else ""
         return f"Contact name: {self.name.value}, phones: {phones}{bday}"
 
@@ -201,6 +216,10 @@ def input_error(func):
                 return "Phone number must be 10 digits."
             if "Invalid date format" in str(e):
                 return "Invalid date format. Use DD.MM.YYYY"
+            if "Invalid email format" in str(e):
+                return "Invalid email format. Use example@domain.com"
+            if "Адресса не повинна бути порожньою" in str(e):
+                return "Address cannot be empty."
             if "not found" in str(e).lower():
                 return "Contact or phone not found."
             return "Give me name and correct data please."
@@ -270,7 +289,6 @@ def add_birthday(args, book: AddressBook):
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")
-    #     return f"Contact {name} not found."
     record.add_birthday(date_str)
     return f"Birthday for {name} aded: {date_str}"
 
@@ -296,6 +314,27 @@ def birthdays(args, book: AddressBook):
         )
     return "\n".join(birthday)
 
+# _________ додано функції-обробники для адреси __________________________
+@input_error
+def add_address(args, book: AddressBook):
+    """Додати адресу для вказаного контакту."""
+    name, address_str, *_ = args
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found")
+    record.add_address(address_str)
+    return f"Address for {name} added: {address_str}"
+
+# _________ додано функції-обробники для email __________________________
+@input_error
+def add_email(args, book: AddressBook):
+    """Додати email для вказаного контакту."""
+    name, email_str, *_ = args
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found")
+    record.add_email(email_str)
+    return f"Email for {name} added: {email_str}"
 
 #---- прибирамо помилки при введенні 
 
@@ -320,7 +359,7 @@ def load_data(filename="addressbook.pkl"):
     except (FileNotFoundError, EOFError, pickle.UnpicklingError):
         return AddressBook()  # якщо файл відсутній або пошкоджений — нова книга
 
-# -------- Головний функціонал
+# -------- Головний функціонал---------
 
 def main():
     book = load_data()
@@ -358,6 +397,12 @@ def main():
 
         elif command == "show-birthday":
             print(show_birthday(args, book))
+
+        elif command == "add-address":
+            print(add_address(args, book))
+
+        elif command == "add-email":
+            print(add_email(args, book))
 
         elif command == "birthdays":
             print(birthdays(args, book))
