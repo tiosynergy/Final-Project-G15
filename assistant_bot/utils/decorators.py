@@ -18,8 +18,12 @@ def input_error(func: Callable[..., str]) -> Callable[..., str]:
                 return "Invalid date format. Use DD.MM.YYYY"
             if "Invalid email format" in message:
                 return "Invalid email format. Use example@domain.com"
-            if "Адресса не повинна бути порожньою" in message:
+            if "Address cannot be empty" in message:
                 return "Address cannot be empty."
+            if "Note" in message or "note" in message:
+                return message
+            if "Keyword cannot be empty" in message:
+                return message
             if "not found" in message.lower():
                 return "Contact or phone not found."
             return "Give me name and correct data please."

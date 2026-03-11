@@ -12,30 +12,34 @@ assistant_bot/
 │   ├── __init__.py
 │   ├── fields.py
 │   ├── record.py
-│   └── address_book.py
+│   ├── address_book.py
+│   └── notes.py
 ├── services/
 │   ├── __init__.py
-│   └── birthday_service.py
+│   ├── birthday_service.py
+│   └── search_service.py
 ├── handlers/
 │   ├── __init__.py
-│   └── commands.py
+│   ├── commands.py
+│   └── notes_commands.py
 └── utils/
-	├── __init__.py
-	├── decorators.py
-	├── parser.py
-	└── storage.py
+    ├── __init__.py
+    ├── decorators.py
+    ├── parser.py
+    └── storage.py
 
 data/
-└── addressbook.pkl
+├── addressbook.pkl
+└── notes.pkl
 
 README.md
 ```
 
 ## Architecture overview
 
-- `models/`: Domain entities and validation logic (`Field`, `Phone`, `Email`, `Record`, `AddressBook`, etc.).
-- `services/`: Business logic independent from CLI and storage (`get_upcoming_birthdays`).
-- `handlers/`: Command handlers used by CLI dispatcher.
+- `models/`: Domain entities and validation logic (`Field`, `Phone`, `Email`, `Record`, `AddressBook`, `Note`, `NotesManager`).
+- `services/`: Business logic independent from CLI and storage (`get_upcoming_birthdays`, notes keyword search).
+- `handlers/`: Command handlers used by CLI dispatcher for contacts and notes.
 - `utils/`: Cross-cutting helpers (`input_error`, parser, pickle storage).
 - `main.py`: CLI loop and command router.
 
@@ -59,11 +63,18 @@ python -m assistant_bot.main
 - `add-address <name> <address>`
 - `add-email <name> <email>`
 - `birthdays`
+- `add-note <text...>`
+- `edit-note <id> <new_text...>`
+- `delete-note <id>`
+- `show-note <id>`
+- `show-notes`
+- `search-notes <keyword...>`
 - `close` or `exit`
 
 ## Data persistence
 
 Contacts are stored in `data/addressbook.pkl` using `pickle`.
+Notes are stored in `data/notes.pkl` using `pickle`.
 
 ## Notes
 

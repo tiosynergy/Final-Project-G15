@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import cast
 
 from assistant_bot.models.address_book import AddressBook
@@ -69,7 +70,7 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
 def show_birthday(args: list[str], book: AddressBook) -> str:
     name, *_ = args
     record = cast(Record, book.find(name))
-    return f"День Народення {name} : {record.birthday}"
+    return f"Birthday for {name}: {record.birthday}"
 
 
 @input_error
@@ -77,14 +78,15 @@ def birthdays(args: list[str], book: AddressBook) -> str:
     _ = args
     upcoming = get_upcoming_birthdays(book)
     if not upcoming:
-        return "На цьому тижні немає днів народження для привітання."
+        return "No birthdays to congratulate this week."
 
-    birthday_lines = ["Список привітань на цьому тижні:\n"]
+    birthday_lines = ["Birthday congratulations for this week:\n"]
     for bd in upcoming:
-        birthday_lines.append(
-            f"{bd['name']}, день народження {bd['r_b'].strftime('%Y.%m.%d')} : "
-            f"привітати {bd['birthday'].strftime('%d.%m.%Y')}"
-        )
+        congratulation_date = datetime.strptime(
+            bd["congratulation_date"],
+            "%Y.%m.%d",
+        ).strftime("%d.%m.%Y")
+        birthday_lines.append(f"{bd['name']}: congratulate on {congratulation_date}")
     return "\n".join(birthday_lines)
 
 
