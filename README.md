@@ -102,9 +102,9 @@ README.md
 
 ## Architecture overview
 
-- `models/`: вomain entities and validation logic (`Field`, `Phone`, `Email`, `Record`, `AddressBook`, `Note`, `NotesManager`).
-- `services/`: иusiness logic independent from CLI and storage (`get_upcoming_birthdays`, notes keyword search).
-- `handlers/`: сommand handlers used by CLI dispatcher for contacts and notes.
+- `models/`: domain entities and validation logic (`Field`, `Phone`, `Email`, `Record`, `AddressBook`, `Note`, `NotesManager`).
+- `services/`: business logic independent from CLI and storage (`get_upcoming_birthdays`, notes keyword search).
+- `handlers/`: command handlers used by CLI dispatcher for contacts and notes.
 - `utils/`: shared utilities (`input_error`, parser, pickle storage).
 - `main.py`: entry point and command dispatcher.
 
