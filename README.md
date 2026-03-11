@@ -10,7 +10,7 @@ The application allows users to manage an address book, track upcoming birthdays
 
 - [Overview](#overview)
 - [Features](#features)
-- [Project Architecture](#project-architecture)
+- [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Running the Application](#running-the-application)
 - [Available Commands](#available-commands)
@@ -21,7 +21,6 @@ The application allows users to manage an address book, track upcoming birthdays
 - [Corner Case Handling](#corner-case-handling)
 - [CLI Color Output](#cli-color-output)
 - [Exit Commands](#exit-commands)
-- [Future Improvements](#future-improvements)
 
 ---
 
@@ -120,7 +119,7 @@ cd <repository_folder>
 
 Make sure Python 3.9.6 or newer is installed.
 
-## Run the Application
+## Running the Application
 
 From the project root:
 
