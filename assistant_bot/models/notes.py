@@ -23,6 +23,7 @@ class Note:
     def _validate_text(text: str) -> None:
         if not text.strip():
             raise ValueError("Note text cannot be empty.")
+        
         if len(text) > MAX_NOTE_LENGTH:
             raise ValueError(
                 f"Note text exceeds maximum length of {MAX_NOTE_LENGTH} characters."
@@ -67,18 +68,22 @@ class NotesManager:
         note = Note(id=self._next_id, text=text)
         self._notes[note.id] = note
         self._next_id += 1
+
         return note
 
     def edit_note(self, note_id: int, new_text: str) -> Note:
         note = self.find_note(note_id)
         if note is None:
             raise ValueError(f"Note with id {note_id} not found.")
+        
         note.update_text(new_text)
+        
         return note
 
     def delete_note(self, note_id: int) -> None:
         if note_id not in self._notes:
             raise ValueError(f"Note with id {note_id} not found.")
+        
         del self._notes[note_id]
 
     def find_note(self, note_id: int) -> Note | None:

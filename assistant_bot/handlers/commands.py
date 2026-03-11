@@ -33,7 +33,9 @@ def change_contact(args: list[str], book: AddressBook) -> str:
     record = book.find(name)
     if record is None:
         return f"Contact {name} not found."
+    
     record.edit_phone(old_phone, new_phone)
+
     return f"Phone for {name} changed from {old_phone} to {new_phone}."
 
 
@@ -43,8 +45,10 @@ def show_phone(args: list[str], book: AddressBook) -> str:
     record = book.find(name)
     if record is None:
         return f"Contact {name} not found."
+    
     if not record.phones:
         return f"{name} has no phones."
+    
     return f"{name}'s phones: {', '.join(str(p.value) for p in record.phones)}"
 
 
@@ -52,7 +56,9 @@ def show_phone(args: list[str], book: AddressBook) -> str:
 def show_all(_: list[str], book: AddressBook) -> str:
     if not book.data:
         return "No contacts yet."
+    
     lines = [str(record) for record in book.data.values()]
+    
     return "\n".join(lines)
 
 
@@ -62,7 +68,9 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")
+    
     record.add_birthday(date_str)
+    
     return f"Birthday for {name} aded: {date_str}"
 
 
@@ -70,6 +78,7 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
 def show_birthday(args: list[str], book: AddressBook) -> str:
     name, *_ = args
     record = cast(Record, book.find(name))
+    
     return f"Birthday for {name}: {record.birthday}"
 
 
@@ -87,6 +96,7 @@ def birthdays(args: list[str], book: AddressBook) -> str:
             "%Y.%m.%d",
         ).strftime("%d.%m.%Y")
         birthday_lines.append(f"{bd['name']}: congratulate on {congratulation_date}")
+    
     return "\n".join(birthday_lines)
 
 
@@ -96,7 +106,9 @@ def add_address(args: list[str], book: AddressBook) -> str:
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")
+    
     record.add_address(address_str)
+    
     return f"Address for {name} added: {address_str}"
 
 
@@ -106,5 +118,7 @@ def add_email(args: list[str], book: AddressBook) -> str:
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")
+    
     record.add_email(email_str)
+    
     return f"Email for {name} added: {email_str}"

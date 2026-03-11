@@ -8,9 +8,11 @@ from assistant_bot.utils.decorators import input_error
 def _parse_note_id(raw_id: str) -> int:
     if not raw_id.isdigit():
         raise ValueError("Note id must be a positive integer.")
+    
     note_id = int(raw_id)
     if note_id <= 0:
         raise ValueError("Note id must be a positive integer.")
+    
     return note_id
 
 
@@ -22,29 +24,43 @@ def _format_note(note_id: int, text: str, status_label: str, status_time: str) -
 def add_note(args: list[str], manager: NotesManager) -> str:
     text = " ".join(args).strip()
     note = manager.add_note(text)
+
     return f"Note added with id {note.id}."
 
 
 @input_error
 def edit_note(args: list[str], manager: NotesManager) -> str:
-    note_id_raw, *text_parts = args
+    if len(args) < 1:
+        raise ValueError("Missing note id.")
+    if len(args) < 2:
+        raise ValueError("Missing new text.")
+    
+    note_id_raw = args[0]
+    text_parts = args[1:]
     note_id = _parse_note_id(note_id_raw)
     new_text = " ".join(text_parts).strip()
     manager.edit_note(note_id, new_text)
+
     return f"Note {note_id} updated."
 
 
 @input_error
 def delete_note(args: list[str], manager: NotesManager) -> str:
-    note_id_raw, *_ = args
+    if len(args) < 1:
+        raise ValueError("Missing note id.")
+    note_id_raw = args[0]
     note_id = _parse_note_id(note_id_raw)
     manager.delete_note(note_id)
+
     return f"Note {note_id} deleted."
 
 
 @input_error
 def show_note(args: list[str], manager: NotesManager) -> str:
-    note_id_raw, *_ = args
+    if len(args) < 1:
+        raise ValueError("Missing note id.")
+    
+    note_id_raw = args[0]
     note_id = _parse_note_id(note_id_raw)
     note = manager.find_note(note_id)
     if note is None:

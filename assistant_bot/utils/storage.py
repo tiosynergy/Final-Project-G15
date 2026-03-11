@@ -57,5 +57,11 @@ def load_notes(filename: str | Path | None = None) -> NotesManager:
     try:
         with open(file_path, "rb") as file:
             return pickle.load(file)
-    except (FileNotFoundError, EOFError, pickle.UnpicklingError):
+    except (
+        FileNotFoundError,
+        EOFError,
+        pickle.UnpicklingError,
+        AttributeError,
+        ModuleNotFoundError,
+    ):
         return NotesManager()

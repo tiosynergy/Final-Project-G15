@@ -1,18 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from importlib import import_module
 
-try:
-    colorama = import_module("colorama")
-    colorama.init(autoreset=True)
-    WELCOME_COLOR = colorama.Fore.YELLOW
-    PROMPT_COLOR = colorama.Fore.CYAN
-    RESET_COLOR = colorama.Style.RESET_ALL
-except Exception:
-    WELCOME_COLOR = ""
-    PROMPT_COLOR = ""
-    RESET_COLOR = ""
+from colorama import Fore, Style, init as colorama_init
 
 from assistant_bot.handlers.commands import (
     add_address,
@@ -85,12 +75,13 @@ def _bot_print(message: str) -> None:
 
 
 def main() -> None:
+    colorama_init(autoreset=True)
     book = load_data()
     notes = load_notes()
-    print(f"{WELCOME_COLOR}Welcome to the assistant bot!{RESET_COLOR}")
+    print(f"{Fore.YELLOW}Welcome to the assistant bot!{Style.RESET_ALL}")
 
     while True:
-        user_input = input(f"\n{PROMPT_COLOR}Enter a command: {RESET_COLOR}").strip()
+        user_input = input(f"\n{Fore.CYAN}Enter a command: {Style.RESET_ALL}").strip()
         if not user_input:
             continue
 
@@ -99,7 +90,7 @@ def main() -> None:
         if command in ["close", "exit"]:
             save_data(book)
             save_notes(notes)
-            print(f"{WELCOME_COLOR}Good bye!{RESET_COLOR}")
+            print(f"{Fore.YELLOW}Good bye!{Style.RESET_ALL}")
             break
 
         if command == "hello":

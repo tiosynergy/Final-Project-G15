@@ -117,6 +117,12 @@ git clone <repository_url>
 cd <repository_folder>
 ```
 
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
 Make sure Python 3.9.6 or newer is installed.
 
 ## Running the Application
@@ -135,10 +141,6 @@ Enter a command:
 ```
 
 ## Available commands
-
-### Contact commands:
-
-## Available Commands
 
 ### Contact Management
 
@@ -169,7 +171,7 @@ Enter a command:
 
 ---
 
-### Application Commands
+### Application Management
 
 | Command           | Description                         |
 | :---------------- | :---------------------------------- |
@@ -229,7 +231,7 @@ add-note Buy milk and bread tomorrow
 **Output**
 
 ```
-Note created with id: 1
+Note added with id 1.
 ```
 
 ---
@@ -258,6 +260,7 @@ Each note contains:
 ### Example output
 
 ```text
+
 [1] Created: 2026-03-11 18:42
 Buy milk and bread
 ```
