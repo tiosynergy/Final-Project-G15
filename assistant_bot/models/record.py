@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from colorama import Fore, Style
+
 from .fields import Address, Birthday, Email, Name, Phone
 
 
@@ -47,10 +49,13 @@ class Record:
         self.email = Email(email_str)
 
     def __str__(self) -> str:
-        phones = ", ".join(str(p.value) for p in self.phones) if self.phones else "no phones"
-        birthday_info = f"birthday: {self.birthday}" if self.birthday else ""
-        address_info = f"address: {self.address}" if self.address else ""
-        email_info = f"email: {self.email}" if self.email else ""
-        output_str = f"Contact name: {self.name.value}\nPhones: {phones}\n{birthday_info}\n{address_info}\n{email_info}"
+        output_str = f"\nContact name: {Fore.GREEN}{self.name.value}{Style.RESET_ALL}"
+        output_str += f'\nPhones: {", ".join(str(p.value) for p in self.phones) if self.phones else "no phones"}'
+        if self.birthday:
+            output_str += f"\nBirthday: {self.birthday}"
+        if self.address:
+            output_str += f"\nAddress: {self.address}"
+        if self.email:
+            output_str += f"\nEmail: {self.email}"
 
-        return output_str.strip()
+        return output_str
