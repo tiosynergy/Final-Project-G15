@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from colorama import Fore, Style
+
 from assistant_bot.models.notes import NotesManager
 from assistant_bot.services.search_service import search_notes_by_keyword
 from assistant_bot.utils.decorators import input_error
@@ -17,7 +19,7 @@ def _parse_note_id(raw_id: str) -> int:
 
 
 def _format_note(note_id: int, text: str, status_label: str, status_time: str) -> str:
-    return f"[{note_id}] {status_label}: {status_time}\n{text}"
+    return f"[{Fore.GREEN}{note_id}{Style.RESET_ALL}] {status_label}: {status_time}\n{text}"
 
 
 @input_error
