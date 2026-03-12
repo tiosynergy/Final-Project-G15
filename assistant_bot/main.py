@@ -101,6 +101,47 @@ def main() -> None:
             _bot_print("How can I help you?")
             continue
 
+        if command == "help":
+            CMD_INFO: list[tuple[str, str]] = [
+                # --- Contacts ---
+                ("add <name> <phone>",                    "Create a new contact or add a phone to existing"),
+                ("change <name> <old_phone> <new_phone>", "Replace an existing phone number"),
+                ("phone <name>",                          "Display all phone numbers of a contact"),
+                ("all",                                   "Display all saved contacts"),
+                ("add-birthday <name> <DD.MM.YYYY>",      "Add a birthday to a contact"),
+                ("show-birthday <name>",                  "Show the birthday of a contact"),
+                ("add-address <name> <address>",          "Add an address to a contact"),
+                ("change-address <name> <address>",       "Update the address of a contact"),
+                ("add-email <name> <email>",              "Add an email to a contact"),
+                ("change-email <name> <email>",           "Update the email of a contact"),
+                ("birthdays",                             "Display contacts with upcoming birthdays"),
+                # --- Notes ---
+                ("add-note <text>",                       "Create a new note"),
+                ("edit-note <id> <text>",                 "Edit an existing note"),
+                ("delete-note <id>",                      "Delete a note"),
+                ("show-note <id>",                        "Display a specific note"),
+                ("show-notes",                            "Display all saved notes"),
+                ("search-notes <keyword>",                "Search notes by keyword"),
+                # --- General ---
+                ("hello",                                 "Display greeting message"),
+                ("help",                                  "Show this help message"),
+                ("exit / close",                         "Save data and close the application"),
+            ]
+            col_width = max(len(cmd) for cmd, _ in CMD_INFO) + 2
+            lines = ["Available commands:\n"]
+            sections = [
+                ("Contacts",    CMD_INFO[:11]),
+                ("Notes",       CMD_INFO[11:17]),
+                ("General",     CMD_INFO[17:]),
+            ]
+            for section_name, items in sections:
+                lines.append(f"{Fore.YELLOW}{section_name}:{Style.RESET_ALL}")
+                for cmd, desc in items:
+                    lines.append(f"  {Fore.CYAN}{cmd:<{col_width}}{Style.RESET_ALL}{desc}")
+                lines.append("")
+            _bot_print("\n".join(lines))
+            continue
+
         handler = COMMANDS.get(command)
         if handler is None:
             _bot_print("Invalid command.")

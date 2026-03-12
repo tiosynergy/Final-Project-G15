@@ -144,17 +144,17 @@ Enter a command:
 
 ### Contact Management
 
-| Command                                 | Description                              |
-| :-------------------------------------- | :--------------------------------------- |
-| `add <name> <phone>`                    | Create a new contact with a phone number |
-| `change <name> <old_phone> <new_phone>` | Replace an existing phone number         |
-| `phone <name>`                          | Display all phone numbers of a contact   |
-| `all`                                   | Display all saved contacts               |
-| `add-birthday <name> <DD.MM.YYYY>`      | Add a birthday to a contact              |
-| `show-birthday <name>`                  | Show the birthday of a contact           |
-| `add-address <name> <address>`          | Add an address to a contact              |
-| `add-email <name> <email>`              | Add an email to a contact                |
-| `birthdays`                             | Display upcoming birthdays               |
+| Command                                 | Description                                                                   |
+| :-------------------------------------- | :---------------------------------------------------------------------------- |
+| `add <name> <phone>`                    | Create a new contact with a phone number (duplicate phone detection included) |
+| `change <name> <old_phone> <new_phone>` | Replace an existing phone number                                              |
+| `phone <name>`                          | Display all phone numbers of a contact                                        |
+| `all`                                   | Display all saved contacts                                                    |
+| `add-birthday <name> <DD.MM.YYYY>`      | Add a birthday to a contact                                                   |
+| `show-birthday <name>`                  | Show the birthday of a contact                                                |
+| `add-address <name> <address>`          | Add an address to a contact                                                   |
+| `add-email <name> <email>`              | Add an email to a contact                                                     |
+| `birthdays`                             | Display upcoming birthdays                                                    |
 
 ---
 
@@ -173,10 +173,11 @@ Enter a command:
 
 ### Application Management
 
-| Command           | Description                         |
-| :---------------- | :---------------------------------- |
-| `hello`           | Display greeting message            |
-| `exit` or `close` | Save data and close the application |
+| Command           | Description                                               |
+| :---------------- | :-------------------------------------------------------- |
+| `hello`           | Display greeting message                                  |
+| `help`            | Display all available commands with usage and description |
+| `exit` or `close` | Save data and close the application                       |
 
 ## Usage Examples
 
@@ -368,10 +369,75 @@ John has no phones.
 
 The application uses colored terminal output for better readability.
 
-| Color  | Purpose                       |
-| ------ | ----------------------------- |
-| Yellow | Welcome and Good bye messages |
-| Blue   | Enter a command message       |
+| Color  | Purpose                                                   |
+| ------ | --------------------------------------------------------- |
+| Yellow | Welcome and Good bye messages                             |
+| Blue   | Enter a command prompt and command names in `help` output |
+| Green  | Contact names and notes id in output                      |
+
+---
+
+## Duplicate Phone Detection
+
+When adding a phone number to an existing contact, the bot checks whether the phone is already recorded.
+
+Example — contact `Tata` already has phone `1234567890`:
+
+```bash
+add Tata 1234567890
+```
+
+**Output**
+
+```text
+Phone 1234567890 is already recorded for Tata.
+```
+
+The contact is not modified, and no duplicate entry is created.
+
+---
+
+## Help Command
+
+Displays all available commands grouped by category, with usage syntax and a brief description.
+
+```bash
+help
+```
+
+**Output**
+
+```text
+Available commands:
+
+Contacts:
+  add <name> <phone>                     Create a new contact or add a phone to existing
+  change <name> <old_phone> <new_phone>  Replace an existing phone number
+  phone <name>                           Display all phone numbers of a contact
+  all                                    Display all saved contacts
+  add-birthday <name> <DD.MM.YYYY>       Add a birthday to a contact
+  show-birthday <name>                   Show the birthday of a contact
+  add-address <name> <address>           Add an address to a contact
+  change-address <name> <address>        Update the address of a contact
+  add-email <name> <email>               Add an email to a contact
+  change-email <name> <email>            Update the email of a contact
+  birthdays                              Display contacts with upcoming birthdays
+
+Notes:
+  add-note <text>                        Create a new note
+  edit-note <id> <text>                  Edit an existing note
+  delete-note <id>                       Delete a note
+  show-note <id>                         Display a specific note
+  show-notes                             Display all saved notes
+  search-notes <keyword>                 Search notes by keyword
+
+General:
+  hello                                  Display greeting message
+  help                                   Show this help message
+  exit / close                           Save data and close the application
+```
+
+Command names are highlighted in cyan, section headers in yellow.
 
 ---
 
