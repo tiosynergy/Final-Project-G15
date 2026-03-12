@@ -71,14 +71,17 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
     
     record.add_birthday(date_str)
     
-    return f"Birthday for {name} aded: {date_str}"
+    return f"Birthday for {name} added: {date_str}"
 
 
 @input_error
 def show_birthday(args: list[str], book: AddressBook) -> str:
     name, *_ = args
     record = cast(Record, book.find(name))
-    
+
+    if record.birthday is None:
+        return f"Birthday for {name} not found."
+
     return f"Birthday for {name}: {record.birthday}"
 
 
@@ -102,7 +105,9 @@ def birthdays(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def add_address(args: list[str], book: AddressBook) -> str:
-    name, address_str, *_ = args
+    name = args[0]
+    address_str = " ".join(args[1:])
+    
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")

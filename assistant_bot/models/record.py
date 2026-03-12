@@ -48,6 +48,9 @@ class Record:
 
     def __str__(self) -> str:
         phones = ", ".join(str(p.value) for p in self.phones) if self.phones else "no phones"
-        birthday_info = f", birthday: {self.birthday}" if self.birthday else ""
+        birthday_info = f"birthday: {self.birthday}" if self.birthday else ""
+        address_info = f"address: {self.address}" if self.address else ""
+        email_info = f"email: {self.email}" if self.email else ""
+        output_str = f"Contact name: {self.name.value}\nPhones: {phones}\n{birthday_info}\n{address_info}\n{email_info}"
 
-        return f"Contact name: {self.name.value}\nphones: {phones}\n{birthday_info}"
+        return output_str.strip()
