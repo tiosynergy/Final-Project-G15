@@ -9,6 +9,14 @@ from .commands import (
     show_birthday,
     show_phone,
 )
+from .notes_commands import (
+    add_note,
+    delete_note,
+    edit_note,
+    search_notes,
+    show_note,
+    show_notes,
+)
 
 __all__ = [
     "add_contact",
@@ -20,4 +28,10 @@ __all__ = [
     "birthdays",
     "add_address",
     "add_email",
+    "add_note",
+    "edit_note",
+    "delete_note",
+    "show_note",
+    "show_notes",
+    "search_notes",
 ]

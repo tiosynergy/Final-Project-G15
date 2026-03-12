@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from colorama import Fore, Style
+
 from .fields import Address, Birthday, Email, Name, Phone
 
 
@@ -19,6 +21,7 @@ class Record:
             if phone.value == phone_number:
                 self.phones.pop(i)
                 return
+            
         raise ValueError(f"Phone {phone_number} not found")
 
     def edit_phone(self, old_phone: str, new_phone: str) -> None:
@@ -26,12 +29,14 @@ class Record:
             if phone.value == old_phone:
                 self.phones[i] = Phone(new_phone)
                 return
+            
         raise ValueError(f"Phone {old_phone} not found")
 
     def find_phone(self, phone_number: str) -> Phone | None:
         for phone in self.phones:
             if phone.value == phone_number:
                 return phone
+            
         return None
 
     def add_birthday(self, birthday_str: str) -> None:
@@ -44,6 +49,13 @@ class Record:
         self.email = Email(email_str)
 
     def __str__(self) -> str:
-        phones = ", ".join(str(p.value) for p in self.phones) if self.phones else "no phones"
-        bday = f", birthday: {self.birthday}" if self.birthday else ""
-        return f"Contact name: {self.name.value}, phones: {phones}{bday}"
+        output_str = f"\nContact name: {Fore.GREEN}{self.name.value}{Style.RESET_ALL}"
+        output_str += f'\nPhones: {", ".join(str(p.value) for p in self.phones) if self.phones else "no phones"}'
+        if self.birthday:
+            output_str += f"\nBirthday: {self.birthday}"
+        if self.address:
+            output_str += f"\nAddress: {self.address}"
+        if self.email:
+            output_str += f"\nEmail: {self.email}"
+
+        return output_str

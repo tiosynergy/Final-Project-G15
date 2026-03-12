@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import cast
 
 from assistant_bot.models.address_book import AddressBook
@@ -32,7 +33,9 @@ def change_contact(args: list[str], book: AddressBook) -> str:
     record = book.find(name)
     if record is None:
         return f"Contact {name} not found."
+    
     record.edit_phone(old_phone, new_phone)
+
     return f"Phone for {name} changed from {old_phone} to {new_phone}."
 
 
@@ -42,8 +45,10 @@ def show_phone(args: list[str], book: AddressBook) -> str:
     record = book.find(name)
     if record is None:
         return f"Contact {name} not found."
+    
     if not record.phones:
         return f"{name} has no phones."
+    
     return f"{name}'s phones: {', '.join(str(p.value) for p in record.phones)}"
 
 
@@ -51,7 +56,9 @@ def show_phone(args: list[str], book: AddressBook) -> str:
 def show_all(_: list[str], book: AddressBook) -> str:
     if not book.data:
         return "No contacts yet."
+    
     lines = [str(record) for record in book.data.values()]
+    
     return "\n".join(lines)
 
 
@@ -61,15 +68,21 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")
+    
     record.add_birthday(date_str)
-    return f"Birthday for {name} aded: {date_str}"
+    
+    return f"Birthday for {name} added: {date_str}"
 
 
 @input_error
 def show_birthday(args: list[str], book: AddressBook) -> str:
     name, *_ = args
     record = cast(Record, book.find(name))
-    return f"День Народення {name} : {record.birthday}"
+
+    if record.birthday is None:
+        return f"Birthday for {name} not found."
+
+    return f"Birthday for {name}: {record.birthday}"
 
 
 @input_error
@@ -77,24 +90,30 @@ def birthdays(args: list[str], book: AddressBook) -> str:
     _ = args
     upcoming = get_upcoming_birthdays(book)
     if not upcoming:
-        return "На цьому тижні немає днів народження для привітання."
+        return "No birthdays to congratulate this week."
 
-    birthday_lines = ["Список привітань на цьому тижні:\n"]
+    birthday_lines = ["Birthday congratulations for this week:\n"]
     for bd in upcoming:
-        birthday_lines.append(
-            f"{bd['name']}, день народження {bd['r_b'].strftime('%Y.%m.%d')} : "
-            f"привітати {bd['birthday'].strftime('%d.%m.%Y')}"
-        )
+        congratulation_date = datetime.strptime(
+            bd["congratulation_date"],
+            "%Y.%m.%d",
+        ).strftime("%d.%m.%Y")
+        birthday_lines.append(f"{bd['name']}: congratulate on {congratulation_date}")
+    
     return "\n".join(birthday_lines)
 
 
 @input_error
 def add_address(args: list[str], book: AddressBook) -> str:
-    name, address_str, *_ = args
+    name = args[0]
+    address_str = " ".join(args[1:])
+    
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")
+    
     record.add_address(address_str)
+    
     return f"Address for {name} added: {address_str}"
 
 
@@ -104,5 +123,7 @@ def add_email(args: list[str], book: AddressBook) -> str:
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")
+    
     record.add_email(email_str)
+    
     return f"Email for {name} added: {email_str}"

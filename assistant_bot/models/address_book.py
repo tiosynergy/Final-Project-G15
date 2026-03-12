@@ -7,7 +7,7 @@ from .record import Record
 
 class AddressBook(UserDict[str, Record]):
     def add_record(self, record: Record) -> None:
-        self.data[record.name.value] = record
+        self.data[str(record.name.value)] = record
 
     def find(self, name: str) -> Record | None:
         return self.data.get(name)

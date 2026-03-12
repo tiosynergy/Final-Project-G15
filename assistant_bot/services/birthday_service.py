@@ -5,10 +5,11 @@ from typing import Any
 
 from assistant_bot.models.address_book import AddressBook
 
-
 def get_upcoming_birthdays(book: AddressBook) -> list[dict[str, Any]]:
     """Return contacts to congratulate in the next 7 days."""
-    now = datetime.now().date()
+    today = datetime.today().date()
+    end_date = today + timedelta(days=7)
+
     upcoming_birthdays: list[dict[str, Any]] = []
 
     for record in book.data.values():
@@ -18,58 +19,30 @@ def get_upcoming_birthdays(book: AddressBook) -> list[dict[str, Any]]:
         birthday = record.birthday.value
 
         try:
-            birthday_this_year = datetime(now.year, birthday.month, birthday.day).date()
+            birthday_this_year = birthday.replace(year=today.year)
         except ValueError:
-            birthday_this_year = datetime(now.year, birthday.month, birthday.day - 1).date()
+            # Feb 29 birthday in non-leap year -> Feb 28.
+            birthday_this_year = birthday.replace(year=today.year, day=28)
 
-        user_birthday_this_year = {
-            "name": record.name.value,
-            "birthday": birthday_this_year,
-        }
+        if birthday_this_year < today:
+            try:
+                birthday_this_year = birthday_this_year.replace(year=today.year + 1)
+            except ValueError:
+                birthday_this_year = birthday.replace(year=today.year + 1, day=28)
 
-        if user_birthday_this_year["birthday"] < now:
-            user_birthday_next_year = {
-                "name": record.name.value,
-                "birthday": datetime(now.year + 1, birthday.month, birthday.day).date(),
-            }
+        if today <= birthday_this_year <= end_date:
+            congratulation_date = birthday_this_year
 
-            congratulation_date = user_birthday_next_year
+            if congratulation_date.weekday() == 5:
+                congratulation_date += timedelta(days=2)
+            elif congratulation_date.weekday() == 6:
+                congratulation_date += timedelta(days=1)
 
-            if congratulation_date["birthday"].weekday() == 5:
-                new_date = congratulation_date["birthday"] + timedelta(days=2)
-                congratulation_date = {
+            upcoming_birthdays.append(
+                {
                     "name": record.name.value,
-                    "birthday": new_date,
-                    "r_b": birthday,
+                    "congratulation_date": congratulation_date.strftime("%Y.%m.%d"),
                 }
-            elif congratulation_date["birthday"].weekday() == 6:
-                new_date = congratulation_date["birthday"] + timedelta(days=1)
-                congratulation_date = {
-                    "name": record.name.value,
-                    "birthday": new_date,
-                    "r_b": birthday,
-                }
-        else:
-            congratulation_date = user_birthday_this_year
-            congratulation_date["r_b"] = birthday
-
-        if 0 <= (congratulation_date["birthday"] - now).days <= 7:
-            if congratulation_date["birthday"].weekday() == 5:
-                new_date = congratulation_date["birthday"] + timedelta(days=2)
-                congratulation_date = {
-                    "name": record.name.value,
-                    "birthday": new_date,
-                    "r_b": birthday,
-                }
-
-            if congratulation_date["birthday"].weekday() == 6:
-                new_date = congratulation_date["birthday"] + timedelta(days=1)
-                congratulation_date = {
-                    "name": record.name.value,
-                    "birthday": new_date,
-                    "r_b": birthday,
-                }
-
-            upcoming_birthdays.append(congratulation_date)
+            )
 
     return upcoming_birthdays

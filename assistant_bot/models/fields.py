@@ -19,7 +19,7 @@ class Name(Field):
 class Address(Field):
     def __init__(self, value: str) -> None:
         if not isinstance(value, str) or not value.strip():
-            raise ValueError("Адресса не повинна бути порожньою")
+            raise ValueError("Address cannot be empty")
         super().__init__(value)
 
 

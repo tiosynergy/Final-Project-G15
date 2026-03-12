@@ -202,6 +202,7 @@ cython_debug/
 
 # Project runtime data
 data/addressbook.pkl
+data/notes.pkl
 .cursorignore
 .cursorindexingignore
 
