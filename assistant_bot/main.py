@@ -6,9 +6,11 @@ from colorama import Fore, Style, init as colorama_init
 
 from assistant_bot.handlers.commands import (
     add_address,
+    change_address,
     add_birthday,
     add_contact,
     add_email,
+    change_email,
     birthdays,
     change_contact,
     show_all,
@@ -58,7 +60,9 @@ COMMANDS: dict[str, CommandHandler] = {
     "add-birthday": _contact_handler(add_birthday),
     "show-birthday": _contact_handler(show_birthday),
     "add-address": _contact_handler(add_address),
+    "change-address": _contact_handler(change_address),
     "add-email": _contact_handler(add_email),
+    "change-email": _contact_handler(change_email),
     "birthdays": _contact_handler(birthdays),
     "add-note": _notes_handler(add_note),
     "edit-note": _notes_handler(edit_note),

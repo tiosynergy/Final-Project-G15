@@ -124,6 +124,25 @@ def add_address(args: list[str], book: AddressBook) -> str:
 
 
 @input_error
+def change_address(args: list[str], book: AddressBook) -> str:
+    if len(args) < 2:
+        raise ValueError("Missing name or new address.")
+    
+    # якщо подвійне ім'я або + прізвище або пробіли: останній arg — address, інше — name
+    new_address_str = " ".join(args[-1:])
+    name = " ".join(args[:-1])
+    
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found")
+    
+    old_address = str(record.address) if record.address else "none"
+    record.add_address(new_address_str)
+    
+    return f"Address for {name} changed from {old_address} to {new_address_str}."
+
+
+@input_error
 def add_email(args: list[str], book: AddressBook) -> str:
     name, email_str, *_ = args
     record = book.find(name)
@@ -133,3 +152,21 @@ def add_email(args: list[str], book: AddressBook) -> str:
     record.add_email(email_str)
     
     return f"Email for {name} added: {email_str}"
+
+@input_error
+def change_email(args: list[str], book: AddressBook) -> str:
+    if len(args) < 2:
+        raise ValueError("Missing name or new email.")
+    
+    # якщо подвійне ім'я або + прізвище або пробіли: arg[-1] — email, все інше — name
+    new_email = args[-1]
+    name = " ".join(args[:-1])
+    
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found")
+    
+    old_email = str(record.email) if record.email else "none"
+    record.add_email(new_email)
+    
+    return f"Email for {name} changed from {old_email} to {new_email}."
