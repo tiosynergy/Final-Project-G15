@@ -28,6 +28,8 @@ def add_contact(args: list[str], book: AddressBook) -> str:
         message = "Contact updated."
 
     if phone:
+        if record.find_phone(phone):
+            return f"Phone {phone} is already recorded for {name}."
         record.add_phone(phone)
 
     return message
