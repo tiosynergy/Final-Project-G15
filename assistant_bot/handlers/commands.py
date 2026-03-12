@@ -11,7 +11,13 @@ from assistant_bot.utils.decorators import input_error
 
 @input_error
 def add_contact(args: list[str], book: AddressBook) -> str:
-    name, phone, *_ = args
+    if len(args) > 1:
+        phone = args[-1]
+        name = " ".join(args[:-1])
+    else:
+        phone = ""
+        name = args[0]
+    
     record = book.find(name)
 
     if record is None:
