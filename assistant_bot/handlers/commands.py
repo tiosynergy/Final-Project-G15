@@ -52,27 +52,36 @@ def add_contact(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def change_contact(args: list[str], book: AddressBook) -> str:
+    if len(args) < 3:
+        raise ValueError("Invalid format. Use: change [name] [old_phone] [new_phone]")
+        
     name, old_phone, new_phone, *_ = args
     record = book.find(name)
     if record is None:
-        return f"Contact {name} not found."
+        return f"Contact '{name}' not found."
     
     record.edit_phone(old_phone, new_phone)
+    return f"Phone for '{name}' changed from {old_phone} to {new_phone}."
 
-    return f"Phone for {name} changed from {old_phone} to {new_phone}."
+@input_error
+def delete_contact(args: list[str], book: AddressBook) -> str:
+   if not args:
+        raise ValueError("Missing contact name. Use: delete [name]")
 
-def delete_contact(args: list[str], book: AddressBook) ->:
-    name, *_ = args
-    record = book.find(name)
-    
-    if record is None:
-        return f"Contact {name} not found."
-        
-    book.delete(name)
-    return "Contact deleted."
+   name = args[0]
+   record = book.find(name)
+   
+   if record is None:
+        return f"Contact '{name}' not found."
+   
+   book.delete(name)
+   return f"Contact '{name}' deleted."
 
 @input_error
 def delete_phone(args: list[str], book: AddressBook) -> str:
+    if len(args) < 2:
+        raise ValueError("Invalid format. Use: delete-phone [name] [phone]")
+    
     name, phone, *_ = args
     record = book.find(name)
     
@@ -85,7 +94,10 @@ def delete_phone(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def show_phone(args: list[str], book: AddressBook) -> str:
-    name, *_ = args
+    if not args:
+        raise ValueError("Missing contact name. Use: phone [name]")
+        
+    name = args[0]
     record = book.find(name)
     if record is None:
         return f"Contact {name} not found."
@@ -108,6 +120,9 @@ def show_all(_: list[str], book: AddressBook) -> str:
 
 @input_error
 def add_birthday(args: list[str], book: AddressBook) -> str:
+    if len(args) < 2:
+        raise ValueError("Invalid format. Use: add-birthday [name] [DD.MM.YYYY]")
+        
     name, date_str, *_ = args
     record = book.find(name)
     if record is None:
@@ -140,8 +155,14 @@ def change_birthday(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def show_birthday(args: list[str], book: AddressBook) -> str:
-    name, *_ = args
-    record = cast(Record, book.find(name))
+    if not args:
+        raise ValueError("Missing contact name. Use: show-birthday [name]")
+        
+    name = args[0]
+    record = book.find(name)
+
+    if record is None:
+        return f"Contact {name} not found."
 
     if record.birthday is None:
         return f"Birthday for {name} not found."
@@ -206,7 +227,7 @@ def change_address(args: list[str], book: AddressBook) -> str:
 @input_error
 def delete_address(args: list[str], book: AddressBook) -> str:
     if len(args) < 2:
-        raise ValueError("Invalid format. Use: remove-address [name] [address]")
+        raise ValueError("Invalid format. Use: delete-address [name] [address]")
     
     name = args[0]
     address_to_delete = " ".join(args[1:])
@@ -275,7 +296,7 @@ def search_contacts(args: list[str], book: AddressBook) -> str:
     # Якщо користувач ввів кілька слів (наприклад, "search John Doe"), склеюємо їх в один рядок
     keyword = " ".join(args)
     
-    found_records = book.search(keyword)
+    found_records = book.search_contacts(keyword)
     
     if not found_records:
         return f"No contacts found matching '{keyword}'."
