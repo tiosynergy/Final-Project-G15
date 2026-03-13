@@ -117,40 +117,39 @@ def main() -> None:
 
         if command == "help":
             CMD_INFO: list[tuple[str, str]] = [
-                CMD_INFO: list[tuple[str, str]] = [
-    # --- Contacts ---
-    ("add <name> <phone>",                                                                         "Create a new contact or add a phone to existing"), 
-    ("change <name> <old_phone> <new_phone>",                                                      "Update a phone number of a contact"),              
-    ("delete <name>",                                                                              "Delete an existing contact"),                      
-    ("search <keyword>",                                                                           "Find a record by keyword"),                        
-    ("delete-phone <name> <old_phone> <new_phone>",                                                "Delete the phone number of a contact"),            
-    ("phone <name>",                                                                               "Show all phone numbers of a contact"),             
-    ("change <old_name> <new_name>",                                                               "Update contact name"),                             
-    ("add-birthday <name> <DD.MM.YYYY>",                                                           "Add a birthday to a contact"),                     
-    ("change-birthday <name> <old_birthday(format: DD.MM.YYYY)> <new_birthday(format: DD.MM.YYYY)>", "Replace an existing birthday"),                    
-    ("show-birthday <name>",                                                                       "Show the birthday of a contact"),                  
-    ("birthdays <number_of_days>",                                                                 "Shows birthdays in specified amount of days"),     
-    ("add-address <name> <address>",                                                               "Add an address of a contact"),                     
-    ("change-address <name> <address>",                                                            "Update the address of a contact"),                 
-    ("delete-address <name> <address>",                                                            "Delete the address of a contact"),                 
-    ("add-email <name> <email>",                                                                   "Add an email to a contact"),                       
-    ("change-email <name> <email>",                                                                "Update the email of a contact"),                   
-    ("delete-email <name> <email>",                                                                "Delete the email of a contact"),                   
-    ("all",                                                                                        "Show all saved contacts"),
-    
-    # --- Notes ---
-    ("add-note <text>",                                                                            "Create a new note"),
-    ("edit-note <id> <text>",                                                                      "Edit an existing note"),
-    ("delete-note <id>",                                                                           "Delete a note"),
-    ("show-note <id>",                                                                             "Display a specific note"),
-    ("show-notes",                                                                                 "Display all saved notes"),
-    ("search-notes <keyword>",                                                                     "Search notes by keyword"),
-    
-    # --- General ---
-    ("hello",                                                                                      "Display greeting message"),
-    ("help",                                                                                       "Show this help message"),
-    ("exit / close",                                                                               "Save data and close the application"),
-]
+        # --- Contacts ---
+        ("add <name> <phone>",                                                                         "Create a new contact or add a phone to existing"), 
+        ("change <name> <old_phone> <new_phone>",                                                      "Update a phone number of a contact"),              
+        ("delete <name>",                                                                              "Delete an existing contact"),                      
+        ("search <keyword>",                                                                           "Find a record by keyword"),                        
+        ("delete-phone <name> <old_phone> <new_phone>",                                                "Delete the phone number of a contact"),            
+        ("phone <name>",                                                                               "Show all phone numbers of a contact"),             
+        ("change <old_name> <new_name>",                                                               "Update contact name"),                             
+        ("add-birthday <name> <DD.MM.YYYY>",                                                           "Add a birthday to a contact"),                     
+        ("change-birthday <name> <old_birthday(format: DD.MM.YYYY)> <new_birthday(format: DD.MM.YYYY)>", "Replace an existing birthday"),                    
+        ("show-birthday <name>",                                                                       "Show the birthday of a contact"),                  
+        ("birthdays <number_of_days>",                                                                 "Shows birthdays in specified amount of days"),     
+        ("add-address <name> <address>",                                                               "Add an address of a contact"),                     
+        ("change-address <name> <address>",                                                            "Update the address of a contact"),                 
+        ("delete-address <name> <address>",                                                            "Delete the address of a contact"),                 
+        ("add-email <name> <email>",                                                                   "Add an email to a contact"),                       
+        ("change-email <name> <email>",                                                                "Update the email of a contact"),                   
+        ("delete-email <name> <email>",                                                                "Delete the email of a contact"),                   
+        ("all",                                                                                        "Show all saved contacts"),
+        
+        # --- Notes ---
+        ("add-note <text>",                                                                            "Create a new note"),
+        ("edit-note <id> <text>",                                                                      "Edit an existing note"),
+        ("delete-note <id>",                                                                           "Delete a note"),
+        ("show-note <id>",                                                                             "Display a specific note"),
+        ("show-notes",                                                                                 "Display all saved notes"),
+        ("search-notes <keyword>",                                                                     "Search notes by keyword"),
+        
+        # --- General ---
+        ("hello",                                                                                      "Display greeting message"),
+        ("help",                                                                                       "Show this help message"),
+        ("exit / close",                                                                               "Save data and close the application"),
+    ]
             col_width = max(len(cmd) for cmd, _ in CMD_INFO) + 2
             lines = ["Available commands:\n"]
             sections = [
