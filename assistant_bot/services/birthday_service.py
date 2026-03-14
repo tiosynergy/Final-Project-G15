@@ -5,43 +5,26 @@ from typing import Any
 
 from assistant_bot.models.address_book import AddressBook
 
-def get_upcoming_birthdays(book: AddressBook) -> list[dict[str, Any]]:
-    """Return contacts to congratulate in the next 7 days."""
-    today = datetime.today().date()
-    end_date = today + timedelta(days=7)
+def get_upcoming_birthdays(number_of_days, book: AddressBook) -> list[dict[str, Any]]:
+    """Return contacts to congratulate on the specified date."""
+    target_date = datetime.today().date() + timedelta(days=int(number_of_days))
 
     upcoming_birthdays: list[dict[str, Any]] = []
 
     for record in book.data.values():
-        if record.birthday is None:
-            continue
-
-        birthday = record.birthday.value
-
-        try:
-            birthday_this_year = birthday.replace(year=today.year)
-        except ValueError:
-            # Feb 29 birthday in non-leap year -> Feb 28.
-            birthday_this_year = birthday.replace(year=today.year, day=28)
-
-        if birthday_this_year < today:
+        if record.birthday:
+            b_date = record.birthday.value
             try:
-                birthday_this_year = birthday_this_year.replace(year=today.year + 1)
+                b_date_target_year = b_date.replace(year=target_date.year)
             except ValueError:
-                birthday_this_year = birthday.replace(year=today.year + 1, day=28)
+            # Feb 29 birthday in non-leap year -> Feb 28.
+                b_date_target_year = b_date.replace(year=target_date.year, day=28)
 
-        if today <= birthday_this_year <= end_date:
-            congratulation_date = birthday_this_year
-
-            if congratulation_date.weekday() == 5:
-                congratulation_date += timedelta(days=2)
-            elif congratulation_date.weekday() == 6:
-                congratulation_date += timedelta(days=1)
-
-            upcoming_birthdays.append(
+            if b_date_target_year == target_date:
+                upcoming_birthdays.append(
                 {
                     "name": record.name.value,
-                    "congratulation_date": congratulation_date.strftime("%Y.%m.%d"),
+                    "congratulation_date": b_date_target_year.strftime("%d.%m.%Y"),
                 }
             )
 
