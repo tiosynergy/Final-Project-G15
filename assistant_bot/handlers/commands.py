@@ -189,7 +189,7 @@ def birthdays(args: list[str], book: AddressBook) -> str:
    for bd in upcoming:
         birthday_lines.append(f"{bd['name']}: {bd['congratulation_date']}")
         
-        return "\n".join(birthday_lines)
+   return "\n".join(birthday_lines)
 
 
 @input_error

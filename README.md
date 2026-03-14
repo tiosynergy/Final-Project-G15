@@ -153,8 +153,10 @@ Enter a command:
 | `add-birthday <name> <DD.MM.YYYY>`      | Add a birthday to a contact                                                   |
 | `show-birthday <name>`                  | Show the birthday of a contact                                                |
 | `add-address <name> <address>`          | Add an address to a contact                                                   |
+| `change-address <name> <address>`       | Update the address of a contact                                               |
 | `add-email <name> <email>`              | Add an email to a contact                                                     |
-| `birthdays`                             | Display upcoming birthdays                                                    |
+| `change-email <name> <email>`           | Update the email of a contact                                                 |
+| `birthdays` <n>                         | Display upcoming birthdays for n days                                         |
 
 ---
 
