@@ -9,7 +9,7 @@ def search_notes_by_keyword(manager: NotesManager, keyword: str) -> list[Note]:
     """Return notes that contain the keyword (case-insensitive)."""
     return manager.search_notes(keyword)
 
-def search_contacts_by_keyword(book: AddressBook, keyword: str) -> list[Record]
+def search_contacts_by_keyword(book: AddressBook, keyword: str) -> list[Record]:
     """Return contacts that contain the keywor in any field(case-insensitive)."""
     return book.search_contacts(keyword)
 
