@@ -183,9 +183,9 @@ def birthdays(args: list[str], book: AddressBook) -> str:
    upcoming = get_upcoming_birthdays(number_of_days, book)
    
    if not upcoming:
-        return f"No birthdays to congratulate in {number_of_days} days."
+        return f"No upcoming birthdays within the next {number_of_days} days."
    
-   birthday_lines = [f"Birthday congratulations in {number_of_days} days:"]
+   birthday_lines = [f"Upcoming birthdays within the next {number_of_days} days:"]
    for bd in upcoming:
         birthday_lines.append(f"{bd['name']}: {bd['congratulation_date']}")
         

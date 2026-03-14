@@ -5,27 +5,33 @@ from typing import Any
 
 from assistant_bot.models.address_book import AddressBook
 
-def get_upcoming_birthdays(number_of_days, book: AddressBook) -> list[dict[str, Any]]:
-    """Return contacts to congratulate on the specified date."""
-    target_date = datetime.today().date() + timedelta(days=int(number_of_days))
-
-    upcoming_birthdays: list[dict[str, Any]] = []
+def get_upcoming_birthdays(number_of_days: str, book: AddressBook) -> list[dict[str, str]]:
+    days_int = int(number_of_days)
+    today = datetime.today().date()
+    upcoming_birthdays = []
 
     for record in book.data.values():
         if record.birthday:
             b_date = record.birthday.value
+            
             try:
-                b_date_target_year = b_date.replace(year=target_date.year)
+                b_date_this_year = b_date.replace(year=today.year)
             except ValueError:
-            # Feb 29 birthday in non-leap year -> Feb 28.
-                b_date_target_year = b_date.replace(year=target_date.year, day=28)
-
-            if b_date_target_year == target_date:
-                upcoming_birthdays.append(
-                {
+                b_date_this_year = b_date.replace(year=today.year, month=3, day=1)
+            
+            if b_date_this_year < today:
+                try:
+                    b_date_this_year = b_date.replace(year=today.year + 1)
+                except ValueError:
+                    b_date_this_year = b_date.replace(year=today.year + 1, month=3, day=1)
+            
+            delta_days = (b_date_this_year - today).days
+            
+            if 0 <= delta_days <= days_int:
+                congratulation_date = b_date_this_year.strftime("%d.%m.%Y")
+                upcoming_birthdays.append({
                     "name": record.name.value,
-                    "congratulation_date": b_date_target_year.strftime("%d.%m.%Y"),
-                }
-            )
-
+                    "congratulation_date": congratulation_date
+                })
+                
     return upcoming_birthdays
