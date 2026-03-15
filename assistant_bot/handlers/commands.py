@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import cast
+import re
 
 from assistant_bot.models.address_book import AddressBook
 from assistant_bot.models.record import Record
@@ -55,7 +56,9 @@ def change_contact(args: list[str], book: AddressBook) -> str:
     if len(args) < 3:
         raise ValueError("Invalid format. Use: change [name] [old_phone] [new_phone]")
         
-    name, old_phone, new_phone, *_ = args
+    new_phone = args[-1]
+    old_phone = args[-2]
+    name = " ".join(args[:-2])
     record = book.find(name)
     if record is None:
         return f"Contact '{name}' not found."
@@ -97,7 +100,7 @@ def show_phone(args: list[str], book: AddressBook) -> str:
     if not args:
         raise ValueError("Missing contact name. Use: phone [name]")
         
-    name = args[0]
+    name = " ".join(args) # об'єднує всі агременти в одне ім'я
     record = book.find(name)
     if record is None:
         return f"Contact {name} not found."
@@ -123,7 +126,9 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
     if len(args) < 2:
         raise ValueError("Invalid format. Use: add-birthday [name] [DD.MM.YYYY]")
         
-    name, date_str, *_ = args
+    # Останній — date, все інше — ім'я
+    date_str = args[-1]
+    name = " ".join(args[:-1])
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")
@@ -137,8 +142,10 @@ def change_birthday(args: list[str], book: AddressBook) -> str:
     if len(args) < 3:
         raise ValueError("Invalid format. Use: change-birthday [name] [old_birthday] [new_birthday]")
     
-    name, old_birthday, new_birthday = args
-    
+    new_birthday = args[-1]
+    old_birthday = args[-2]
+    name = " ".join(args[:-2])
+
     record = book.find(name)
     
     if record is None:
@@ -158,7 +165,8 @@ def show_birthday(args: list[str], book: AddressBook) -> str:
     if not args:
         raise ValueError("Missing contact name. Use: show-birthday [name]")
         
-    name = args[0]
+    # name = args[0]
+    name = " ".join(args)
     record = book.find(name)
 
     if record is None:
@@ -194,8 +202,23 @@ def birthdays(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def add_address(args: list[str], book: AddressBook) -> str:
-    name = args[0]
-    address_str = " ".join(args[1:])
+    if len(args) < 2:
+        raise ValueError("Missing name or new address.")
+    
+    # Об’єднуємо args навпаки в рядок для regex парсингу
+    full_args_str = " ".join(args)
+    
+    # # Використовуєм regex щоб дістати ім'я та адресу в лапках
+    # промпт: ім'я (любі символи крім ") + пробіл + "адреса" (в лапках)
+    match = re.match(r'^(.*?) "(.+?)"$', full_args_str.strip())
+    if not match:
+        raise ValueError("Invalid input format. Use: " " for address if it has spaces.")
+    
+    name = match.group(1).strip()
+    address_str = match.group(2).strip()
+    
+    if not address_str:
+        raise ValueError("Address cannot be empty.")
     
     record = book.find(name)
     if record is None:
@@ -210,10 +233,20 @@ def add_address(args: list[str], book: AddressBook) -> str:
 def change_address(args: list[str], book: AddressBook) -> str:
     if len(args) < 2:
         raise ValueError("Missing name or new address.")
+ 
+    full_args_str = " ".join(args)
     
-    # якщо подвійне ім'я або + прізвище або пробіли: останній arg — address, інше — name
-    new_address_str = " ".join(args[-1:])
-    name = " ".join(args[:-1])
+    # Використовуєм regex щоб дістати ім'я та адресу в лапках
+    # промпт: ім'я (любі символи крім ") + пробіл + "адреса" (в лапках)
+    match = re.match(r'^(.*?) "(.+?)"$', full_args_str.strip())
+    if not match:
+        raise ValueError("Invalid input format. Use: change-address [name] \"[new_address]\" with quotes for address if it has spaces.")
+    
+    name = match.group(1).strip()
+    new_address_str = match.group(2).strip()
+    
+    if not new_address_str:
+        raise ValueError("Address cannot be empty.")
     
     record = book.find(name)
     if record is None:
@@ -244,7 +277,9 @@ def delete_address(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def add_email(args: list[str], book: AddressBook) -> str:
-    name, email_str, *_ = args
+    # останній — email, все інше — ім'я
+    email_str = args[-1]
+    name = " ".join(args[:-1])
     record = book.find(name)
     if record is None:
         raise ValueError("Contact not found")
@@ -276,7 +311,9 @@ def delete_email(args: list[str], book: AddressBook) -> str:
     if len(args) < 2:
         raise ValueError("Invalid format. Use: delete-email [name] [email]")
     
-    name, email_to_delete = args[0], args[1]
+    # останній — email, все інше — name
+    email_to_delete = args[-1]
+    name = " ".join(args[:-1])
     
     record = book.find(name)
     if record is None:
