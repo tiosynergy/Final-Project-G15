@@ -12,30 +12,26 @@ from assistant_bot.utils.decorators import input_error
 
 @input_error
 def change_name(args: list[str], book: AddressBook) -> str:
-    """Rename an existing contact.
-
-    Args:
-        args: Command arguments in the format [old_name, new_name].
-        book: Address book storage.
-
-    Returns:
-        A human-readable status message.
-
-    Errors:
-        ValueError for invalid command format is converted by input_error.
-        KeyError from storage lookup is handled locally and converted to text.
-    """
-    if len(args) < 2:
-        raise ValueError("Invalid format. Use: change-name [old_name] [new_name]")
+    """Rename an existing contact using a separator."""
     
-    old_name, new_name = args[0], args[1]
+    full_input = " ".join(args)
+    
+    if " | " not in full_input:
+        raise ValueError("Use format: change-name [old name] | [new name]")
+    
+    parts = full_input.split(" | ")
+    old_name = parts[0].strip()
+    new_name = parts[1].strip()
+    
+    if not old_name or not new_name:
+        raise ValueError("Both old and new names are required.")
     
     if book.find(new_name):
-        return f"Contact with name '{new_name}' already exists. Please choose a different name."
+        return f"Contact '{new_name}' already exists. Choose another name."
     
     try:
         book.change_record_name(old_name, new_name)
-        return f"Contact name successfully changed from '{old_name}' to '{new_name}'."
+        return f"Contact name changed from '{old_name}' to '{new_name}'."
     except KeyError:
         return f"Contact '{old_name}' not found."
     
@@ -121,7 +117,8 @@ def delete_contact(args: list[str], book: AddressBook) -> str:
    if not args:
         raise ValueError("Missing contact name. Use: delete [name]")
 
-   name = args[0]
+   name = " ".join(args).strip()
+
    record = book.find(name)
    
    if record is None:
@@ -147,7 +144,8 @@ def delete_phone(args: list[str], book: AddressBook) -> str:
     if len(args) < 2:
         raise ValueError("Invalid format. Use: delete-phone [name] [phone]")
     
-    name, phone, *_ = args
+    phone = args[-1]
+    name = " ".join(args[:-1])
     record = book.find(name)
     
     if record is None:
