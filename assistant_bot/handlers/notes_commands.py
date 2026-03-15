@@ -8,6 +8,17 @@ from assistant_bot.utils.decorators import input_error
 
 
 def _parse_note_id(raw_id: str) -> int:
+    """Convert and validate a note identifier.
+
+    Args:
+        raw_id: Raw note id string from user input.
+
+    Returns:
+        A positive integer note id.
+
+    Errors:
+        Raises ValueError when the id is not a positive integer.
+    """
     if not raw_id.isdigit():
         raise ValueError("Note id must be a positive integer.")
     
@@ -19,11 +30,34 @@ def _parse_note_id(raw_id: str) -> int:
 
 
 def _format_note(note_id: int, text: str, status_label: str, status_time: str) -> str:
+    """Render a single note entry for CLI output.
+
+    Args:
+        note_id: Note identifier.
+        text: Note text body.
+        status_label: Human-readable status label.
+        status_time: Formatted status timestamp.
+
+    Returns:
+        A multiline formatted note string.
+    """
     return f"[{Fore.GREEN}{note_id}{Style.RESET_ALL}] {status_label}: {status_time}\n{text}"
 
 
 @input_error
 def add_note(args: list[str], manager: NotesManager) -> str:
+    """Create a new note from command arguments.
+
+    Args:
+        args: Note text tokens.
+        manager: Notes storage manager.
+
+    Returns:
+        A status message with the created note id.
+
+    Errors:
+        Validation errors are converted by input_error.
+    """
     text = " ".join(args).strip()
     note = manager.add_note(text)
 
@@ -32,6 +66,18 @@ def add_note(args: list[str], manager: NotesManager) -> str:
 
 @input_error
 def edit_note(args: list[str], manager: NotesManager) -> str:
+    """Update text for an existing note.
+
+    Args:
+        args: Command arguments in the format [id, new_text...].
+        manager: Notes storage manager.
+
+    Returns:
+        A status message confirming the update.
+
+    Errors:
+        ValueError for invalid id or missing text is converted by input_error.
+    """
     if len(args) < 1:
         raise ValueError("Missing note id.")
     if len(args) < 2:
@@ -48,6 +94,18 @@ def edit_note(args: list[str], manager: NotesManager) -> str:
 
 @input_error
 def delete_note(args: list[str], manager: NotesManager) -> str:
+    """Delete a note by id.
+
+    Args:
+        args: Command arguments containing the note id.
+        manager: Notes storage manager.
+
+    Returns:
+        A status message confirming deletion.
+
+    Errors:
+        ValueError for invalid id is converted by input_error.
+    """
     if len(args) < 1:
         raise ValueError("Missing note id.")
     note_id_raw = args[0]
@@ -59,6 +117,18 @@ def delete_note(args: list[str], manager: NotesManager) -> str:
 
 @input_error
 def show_note(args: list[str], manager: NotesManager) -> str:
+    """Display one note by id.
+
+    Args:
+        args: Command arguments containing the note id.
+        manager: Notes storage manager.
+
+    Returns:
+        Formatted note text or a not-found message.
+
+    Errors:
+        ValueError for invalid id is converted by input_error.
+    """
     if len(args) < 1:
         raise ValueError("Missing note id.")
     
@@ -78,6 +148,15 @@ def show_note(args: list[str], manager: NotesManager) -> str:
 
 @input_error
 def show_notes(_: list[str], manager: NotesManager) -> str:
+    """Display all notes.
+
+    Args:
+        _: Unused command arguments.
+        manager: Notes storage manager.
+
+    Returns:
+        Formatted list of notes or an empty-state message.
+    """
     notes = manager.get_all_notes()
     if not notes:
         return "No notes yet."
@@ -98,6 +177,18 @@ def show_notes(_: list[str], manager: NotesManager) -> str:
 
 @input_error
 def search_notes(args: list[str], manager: NotesManager) -> str:
+    """Search notes by keyword.
+
+    Args:
+        args: Command arguments containing keyword text.
+        manager: Notes storage manager.
+
+    Returns:
+        Formatted list of matched notes or an empty-result message.
+
+    Errors:
+        ValueError for empty keyword is converted by input_error.
+    """
     keyword = " ".join(args).strip()
     if not keyword:
         raise ValueError("Keyword cannot be empty.")

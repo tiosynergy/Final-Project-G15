@@ -6,6 +6,18 @@ from typing import Any
 from assistant_bot.models.address_book import AddressBook
 
 def get_upcoming_birthdays(number_of_days: str, book: AddressBook) -> list[dict[str, str]]:
+    """Collect contacts with birthdays in the next N days.
+
+    Args:
+        number_of_days: Number of upcoming days as a string.
+        book: Address book storage.
+
+    Returns:
+        A list of dictionaries with keys "name" and "congratulation_date".
+
+    Errors:
+        ValueError can be raised if number_of_days cannot be converted to int.
+    """
     days_int = int(number_of_days)
     today = datetime.today().date()
     upcoming_birthdays = []

@@ -43,7 +43,25 @@ CommandHandler = Callable[[list[str], AddressBook, NotesManager], str]
 def _contact_handler(
     handler: Callable[[list[str], AddressBook], str],
 ) -> CommandHandler:
+    """Adapt a contact-only handler to the unified command signature.
+
+    Args:
+        handler: Contact command function accepting (args, book).
+
+    Returns:
+        A wrapped handler accepting (args, book, notes).
+    """
     def wrapped(args: list[str], book: AddressBook, notes: NotesManager) -> str:
+        """Proxy call for contact handlers while ignoring notes storage.
+
+        Args:
+            args: Parsed command arguments.
+            book: Address book storage.
+            notes: Notes storage (unused).
+
+        Returns:
+            Handler response string.
+        """
         _ = notes
         return handler(args, book)
 
@@ -53,7 +71,25 @@ def _contact_handler(
 def _notes_handler(
     handler: Callable[[list[str], NotesManager], str],
 ) -> CommandHandler:
+    """Adapt a notes-only handler to the unified command signature.
+
+    Args:
+        handler: Notes command function accepting (args, notes).
+
+    Returns:
+        A wrapped handler accepting (args, book, notes).
+    """
     def wrapped(args: list[str], book: AddressBook, notes: NotesManager) -> str:
+        """Proxy call for notes handlers while ignoring address book.
+
+        Args:
+            args: Parsed command arguments.
+            book: Address book storage (unused).
+            notes: Notes storage.
+
+        Returns:
+            Handler response string.
+        """
         _ = book
         return handler(args, notes)
 
@@ -88,11 +124,27 @@ COMMANDS: dict[str, CommandHandler] = {
 
 
 def _bot_print(message: str) -> None:
+    """Print a bot message with CLI-friendly spacing.
+
+    Args:
+        message: Text to print.
+
+    Returns:
+        None.
+    """
     # Print bot replies with a leading empty line for better CLI readability.
     print(f"\n{message}")
 
 
 def main() -> None:
+    """Run the interactive assistant bot loop.
+
+    The function initializes color output, loads persisted contacts and notes,
+    handles command dispatch, and stores data on graceful exit.
+
+    Returns:
+        None.
+    """
     colorama_init(autoreset=True)
     book = load_data()
     notes = load_notes()
@@ -116,47 +168,55 @@ def main() -> None:
             continue
 
         if command == "help":
-            CMD_INFO: list[tuple[str, str]] = [
-        # --- Contacts ---
-        ("add <name> <phone>",                                                                         "Create a new contact or add a phone to existing"), 
-        ("change <name> <old_phone> <new_phone>",                                                      "Update a phone number of a contact"),              
-        ("delete <name>",                                                                              "Delete an existing contact"),                      
-        ("search <keyword>",                                                                           "Find a record by keyword"),                        
-        ("delete-phone <name> <old_phone> <new_phone>",                                                "Delete the phone number of a contact"),            
-        ("phone <name>",                                                                               "Show all phone numbers of a contact"),             
-        ("change <old_name> <new_name>",                                                               "Update contact name"),                             
-        ("add-birthday <name> <DD.MM.YYYY>",                                                           "Add a birthday to a contact"),                     
-        ("change-birthday <name> <old_birthday(format: DD.MM.YYYY)> <new_birthday(format: DD.MM.YYYY)>", "Replace an existing birthday"),                    
-        ("show-birthday <name>",                                                                       "Show the birthday of a contact"),                  
-        ("birthdays <number_of_days>",                                                                 "Shows birthdays in specified amount of days"),     
-        ("add-address <name> <address>",                                                               "Add an address of a contact"),                     
-        ("change-address <name> <address>",                                                            "Update the address of a contact"),                 
-        ("delete-address <name> <address>",                                                            "Delete the address of a contact"),                 
-        ("add-email <name> <email>",                                                                   "Add an email to a contact"),                       
-        ("change-email <name> <email>",                                                                "Update the email of a contact"),                   
-        ("delete-email <name> <email>",                                                                "Delete the email of a contact"),                   
-        ("all",                                                                                        "Show all saved contacts"),
-        
-        # --- Notes ---
-        ("add-note <text>",                                                                            "Create a new note"),
-        ("edit-note <id> <text>",                                                                      "Edit an existing note"),
-        ("delete-note <id>",                                                                           "Delete a note"),
-        ("show-note <id>",                                                                             "Display a specific note"),
-        ("show-notes",                                                                                 "Display all saved notes"),
-        ("search-notes <keyword>",                                                                     "Search notes by keyword"),
-        
-        # --- General ---
-        ("hello",                                                                                      "Display greeting message"),
-        ("help",                                                                                       "Show this help message"),
-        ("exit / close",                                                                               "Save data and close the application"),
-    ]
-            col_width = max(len(cmd) for cmd, _ in CMD_INFO) + 2
-            lines = ["Available commands:\n"]
-            sections = [
-                ("Contacts",    CMD_INFO[:11]),
-                ("Notes",       CMD_INFO[11:17]),
-                ("General",     CMD_INFO[17:]),
+            sections: list[tuple[str, list[tuple[str, str]]]] = [
+                (
+                    "Contacts",
+                    [
+                        ("add <name> <phone>", "Create a new contact or add a phone to existing"),
+                        ("change <name> <old_phone> <new_phone>", "Update a phone number of a contact"),
+                        ("delete <name>", "Delete an existing contact"),
+                        ("search <keyword>", "Find a record by keyword"),
+                        ("delete-phone <name> <phone>", "Delete the phone number of a contact"),
+                        ("phone <name>", "Show all phone numbers of a contact"),
+                        ("change-name <old_name> <new_name>", "Update contact name"),
+                        ("add-birthday <name> <DD.MM.YYYY>", "Add a birthday to a contact"),
+                        ("change-birthday <name> <old_birthday> <new_birthday>", "Replace an existing birthday (date format: DD.MM.YYYY)"),
+                        ("show-birthday <name>", "Show the birthday of a contact"),
+                        ("birthdays <number_of_days>", "Shows birthdays in specified amount of days"),
+                        ("add-address <name> <address>", "Add an address of a contact"),
+                        ("change-address <name> <address>", "Update the address of a contact"),
+                        ("delete-address <name>", "Delete the address of a contact"),
+                        ("add-email <name> <email>", "Add an email to a contact"),
+                        ("change-email <name> <email>", "Update the email of a contact"),
+                        ("delete-email <name> <email>", "Delete the email of a contact"),
+                        ("all", "Show all saved contacts"),
+                    ],
+                ),
+                (
+                    "Notes",
+                    [
+                        ("add-note <text>", "Create a new note"),
+                        ("edit-note <id> <text>", "Edit an existing note"),
+                        ("delete-note <id>", "Delete a note"),
+                        ("show-note <id>", "Display a specific note"),
+                        ("show-notes", "Display all saved notes"),
+                        ("search-notes <keyword>", "Search notes by keyword"),
+                    ],
+                ),
+                (
+                    "General",
+                    [
+                        ("hello", "Display greeting message"),
+                        ("help", "Show this help message"),
+                        ("exit / close", "Save data and close the application"),
+                    ],
+                ),
             ]
+
+            all_commands = [item for _, items in sections for item in items]
+            col_width = max(len(cmd) for cmd, _ in all_commands) + 2
+            lines = ["Available commands:\n"]
+
             for section_name, items in sections:
                 lines.append(f"{Fore.YELLOW}{section_name}:{Style.RESET_ALL}")
                 for cmd, desc in items:
