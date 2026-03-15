@@ -48,7 +48,9 @@ class Address(Field):
         """
         if not isinstance(value, str) or not value.strip():
             raise ValueError("Address cannot be empty")
-        super().__init__(value)
+
+        formatted_address = value.strip().title()
+        super().__init__(formatted_address)
 
 
 class Email(Field):
