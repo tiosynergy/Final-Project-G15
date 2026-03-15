@@ -140,6 +140,29 @@ Welcome to the assistant bot!
 Enter a command:
 ```
 
+## Installation as a Python Package
+
+
+The project can be installed as a fully functional Python package. After installation you can run the assistant from any folder on your computer just by typing a simple command — no need to cd into the project or use python -m.
+1. Install in editable (development) mode
+Open the terminal in the root folder of the project and run:
+
+```Bash
+pip install -e .
+```
+
+-e (editable) means any changes you make in the code will immediately be reflected when you run the bot.
+This command also creates the executable assistant-bot.
+
+2. How to run the bot from anywhere
+Now you can simply type:
+
+```Bash
+assistant-bot
+```
+
+You will see the welcome message and can start using all commands immediately.
+
 ## Available commands
 
 ### Contact Management
