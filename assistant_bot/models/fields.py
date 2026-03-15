@@ -84,7 +84,7 @@ class Phone(Field):
             Raises ValueError if phone is not 10 digits.
         """
         if not (value.isdigit() and len(value) == 10):
-            raise ValueError("10")
+            raise ValueError("Phone must contain 10 digits")
         super().__init__(value)
 
 
