@@ -90,7 +90,7 @@ class Record:
         """
         self.birthday = Birthday(birthday_str)
 
-    def edit_birthday(self, old_birthday: str, new_birthday: str) -> None:
+    def edit_birthday(self, old_birthday_str: str, new_birthday_str: str) -> None:
         """Replace birthday value if current birthday matches expected old value.
 
         Args:
@@ -100,10 +100,18 @@ class Record:
         Errors:
             Raises ValueError if old value does not match or new date is invalid.
         """
-        if self.birthday and self.birthday.value == old_birthday:
-            self.birthday = Birthday(new_birthday)
-            return
-        raise ValueError(f"Birthday {old_birthday} not found")
+        if self.birthday is None:
+            raise ValueError("No birthday to edit.")
+        
+        old_birthday = Birthday(old_birthday_str)  # Валидация old
+        if str(self.birthday) != str(old_birthday):
+            raise ValueError(f"Old birthday does not match the current one: {self.birthday}")
+        
+        self.birthday = Birthday(new_birthday_str)  # Замена на new с валидацией
+        # if self.birthday and self.birthday.value == old_birthday:
+        #     self.birthday = Birthday(new_birthday)
+        #     return
+        # raise ValueError(f"Birthday {old_birthday} not found")
 
     def add_address(self, address_str: str) -> None:
         """Set or replace contact address.

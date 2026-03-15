@@ -147,17 +147,25 @@ Enter a command:
 | Command                                      | Description                                                                   |
 | :------------------------------------------- | :---------------------------------------------------------------------------- |
 | `add <name> <phone>`                         | Create a new contact with a phone number (duplicate phone detection included) |
-| `change-name <name> <old_phone> <new_phone>` | Replace an existing phone number                                              |
-| `phone <name>`                               | Display all phone numbers of a contact                                        |
-| `all`                                        | Display all saved contacts                                                    |
-| `add-birthday <name> <DD.MM.YYYY>`           | Add a birthday to a contact                                                   |
-| `show-birthday <name>`                       | Show the birthday of a contact                                                |
-| `add-address <name> <address>`               | Add an address to a contact                                                   |
-| `change-address <name> <address>`            | Update the address of a contact                                               |
-| `add-email <name> <email>`                   | Add an email to a contact                                                     |
-| `change-email <name> <email>`                | Update the email of a contact                                                 |
-| `birthdays` <n>                              | Display upcoming birthdays for n days                                         |
+| `change-name <name> <old_phone> <new_phone>` | Replace an existing phone number                                                                        |
+| `phone <name>`                               | Display all phone numbers of a contact                                                                       |
+| `all`                                        | Display all saved contacts                                                                      |
+| `add-birthday <name> <DD.MM.YYYY>`           | Add a birthday to a contact                                                                        |
+| `change-birthday <name> <old_date> <new_date>`| Change an existing birthday                                                                       |
+| `show-birthday <name>`                       | Show the birthday of a contact                                                                        |
+| `add-address <name> <address>`               | Add an address to a contact                                                                        |
+| `change-address <name> "<new_address>"`      | Update the address of a contact                                                                        |
+| `delete-address <name>"`                     |Remove the address from a contact (supports names with spaces)                                                   |
+| `add-email <name> <email>`                   | Add an email to a contact                                                                         |
+| `change-email <name> <email>`                | Update the email of a contact                                                                        |
+| `delete-email <name> <email>`                |Delete a specific email from a contact                                                                        |
+| `change-name <old_name> <new_name>`          |Rename an existing contact                                                                         |
+| `delete <name>`                              |Completely delete a contact (supports names with spaces)                                                              |
+| `delete-phone <name> <phone>`                |Remove a specific phone number from a contact                                                                          |
+| `birthdays` <n>                              | Display upcoming birthdays for n days                                                                             |
+| `search <keyword>`                           |Search contacts by any field (name, phone, email, address)                                                                   |
 
+If a contact name or address contains spaces, you must enclose it in double quotes (").
 ---
 
 ### Notes Management
