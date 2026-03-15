@@ -276,12 +276,15 @@ def change_birthday(args: list[str], book: AddressBook) -> str:
         ValueError for invalid format or date parsing is converted by input_error.
         Record-level ValueError is handled locally and returned as text.
     """
-    if len(args) < 3:
-        raise ValueError("Invalid format. Use: change-birthday [name] [old_birthday] [new_birthday]")
     
     new_birthday = args[-1]
     old_birthday = args[-2]
-    name = " ".join(args[:-2])
+    name = " ".join(args[:-2]).strip()
+
+    # Перевіряємо, чи є обидва аргументи датами
+    date_pattern = r"^\d{2}\.\d{2}\.\d{4}$"
+    if not re.match(date_pattern, old_birthday) or not re.match(date_pattern, new_birthday):
+        raise ValueError(f"Invalid dates. Usage: change-birthday {name} DD.MM.YYYY DD.MM.YYYY")
 
     record = book.find(name)
     
