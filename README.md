@@ -144,19 +144,19 @@ Enter a command:
 
 ### Contact Management
 
-| Command                                 | Description                                                                   |
-| :-------------------------------------- | :---------------------------------------------------------------------------- |
-| `add <name> <phone>`                    | Create a new contact with a phone number (duplicate phone detection included) |
-| `change <name> <old_phone> <new_phone>` | Replace an existing phone number                                              |
-| `phone <name>`                          | Display all phone numbers of a contact                                        |
-| `all`                                   | Display all saved contacts                                                    |
-| `add-birthday <name> <DD.MM.YYYY>`      | Add a birthday to a contact                                                   |
-| `show-birthday <name>`                  | Show the birthday of a contact                                                |
-| `add-address <name> <address>`          | Add an address to a contact                                                   |
-| `change-address <name> <address>`       | Update the address of a contact                                               |
-| `add-email <name> <email>`              | Add an email to a contact                                                     |
-| `change-email <name> <email>`           | Update the email of a contact                                                 |
-| `birthdays` <n>                         | Display upcoming birthdays for n days                                         |
+| Command                                      | Description                                                                   |
+| :------------------------------------------- | :---------------------------------------------------------------------------- |
+| `add <name> <phone>`                         | Create a new contact with a phone number (duplicate phone detection included) |
+| `change-name <name> <old_phone> <new_phone>` | Replace an existing phone number                                              |
+| `phone <name>`                               | Display all phone numbers of a contact                                        |
+| `all`                                        | Display all saved contacts                                                    |
+| `add-birthday <name> <DD.MM.YYYY>`           | Add a birthday to a contact                                                   |
+| `show-birthday <name>`                       | Show the birthday of a contact                                                |
+| `add-address <name> <address>`               | Add an address to a contact                                                   |
+| `change-address <name> <address>`            | Update the address of a contact                                               |
+| `add-email <name> <email>`                   | Add an email to a contact                                                     |
+| `change-email <name> <email>`                | Update the email of a contact                                                 |
+| `birthdays` <n>                              | Display upcoming birthdays for n days                                         |
 
 ---
 
@@ -413,30 +413,37 @@ help
 Available commands:
 
 Contacts:
-  add <name> <phone>                     Create a new contact or add a phone to existing
-  change <name> <old_phone> <new_phone>  Replace an existing phone number
-  phone <name>                           Display all phone numbers of a contact
-  all                                    Display all saved contacts
-  add-birthday <name> <DD.MM.YYYY>       Add a birthday to a contact
-  show-birthday <name>                   Show the birthday of a contact
-  add-address <name> <address>           Add an address to a contact
-  change-address <name> <address>        Update the address of a contact
-  add-email <name> <email>               Add an email to a contact
-  change-email <name> <email>            Update the email of a contact
-  birthdays                              Display contacts with upcoming birthdays
+  add <name> <phone>                                     Create a new contact or add a phone to existing
+  change <name> <old_phone> <new_phone>                  Update a phone number of a contact
+  delete <name>                                          Delete an existing contact
+  search <keyword>                                       Find a record by keyword
+  delete-phone <name> <phone>                            Delete the phone number of a contact
+  phone <name>                                           Show all phone numbers of a contact
+  change-name <old_name> <new_name>                      Update contact name
+  add-birthday <name> <DD.MM.YYYY>                       Add a birthday to a contact
+  change-birthday <name> <old_birthday> <new_birthday>   Replace an existing birthday (date format: DD.MM.YYYY)
+  show-birthday <name>                                   Show the birthday of a contact
+  birthdays <number_of_days>                             Shows birthdays in specified amount of days
+  add-address <name> <address>                           Add an address of a contact
+  change-address <name> <address>                        Update the address of a contact
+  delete-address <name>                                  Delete the address of a contact
+  add-email <name> <email>                               Add an email to a contact
+  change-email <name> <email>                            Update the email of a contact
+  delete-email <name> <email>                            Delete the email of a contact
+  all                                                    Show all saved contacts
 
 Notes:
-  add-note <text>                        Create a new note
-  edit-note <id> <text>                  Edit an existing note
-  delete-note <id>                       Delete a note
-  show-note <id>                         Display a specific note
-  show-notes                             Display all saved notes
-  search-notes <keyword>                 Search notes by keyword
+  add-note <text>                                        Create a new note
+  edit-note <id> <text>                                  Edit an existing note
+  delete-note <id>                                       Delete a note
+  show-note <id>                                         Display a specific note
+  show-notes                                             Display all saved notes
+  search-notes <keyword>                                 Search notes by keyword
 
 General:
-  hello                                  Display greeting message
-  help                                   Show this help message
-  exit / close                           Save data and close the application
+  hello                                                  Display greeting message
+  help                                                   Show this help message
+  exit / close                                           Save data and close the application
 ```
 
 Command names are highlighted in cyan, section headers in yellow.

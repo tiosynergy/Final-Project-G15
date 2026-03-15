@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import cast
 import re
+from colorama import Fore, Style
 
 from assistant_bot.models.address_book import AddressBook
 from assistant_bot.models.record import Record
@@ -11,6 +12,19 @@ from assistant_bot.utils.decorators import input_error
 
 @input_error
 def change_name(args: list[str], book: AddressBook) -> str:
+    """Rename an existing contact.
+
+    Args:
+        args: Command arguments in the format [old_name, new_name].
+        book: Address book storage.
+
+    Returns:
+        A human-readable status message.
+
+    Errors:
+        ValueError for invalid command format is converted by input_error.
+        KeyError from storage lookup is handled locally and converted to text.
+    """
     if len(args) < 2:
         raise ValueError("Invalid format. Use: change-name [old_name] [new_name]")
     
@@ -27,6 +41,18 @@ def change_name(args: list[str], book: AddressBook) -> str:
     
 @input_error
 def add_contact(args: list[str], book: AddressBook) -> str:
+    """Create a contact or append a phone to an existing contact.
+
+    Args:
+        args: Command arguments containing name and optional phone.
+        book: Address book storage.
+
+    Returns:
+        A message indicating whether a contact was added or updated.
+
+    Errors:
+        Validation errors from command parsing and phone creation are converted by input_error.
+    """
     if len(args) > 1:
         phone = args[-1]
         name = " ".join(args[:-1])
@@ -53,6 +79,18 @@ def add_contact(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def change_contact(args: list[str], book: AddressBook) -> str:
+    """Replace an existing phone number for a contact.
+
+    Args:
+        args: Command arguments in the format [name, old_phone, new_phone].
+        book: Address book storage.
+
+    Returns:
+        A status message describing the update result.
+
+    Errors:
+        ValueError from invalid format or phone replacement is converted by input_error.
+    """
     if len(args) < 3:
         raise ValueError("Invalid format. Use: change [name] [old_phone] [new_phone]")
         
@@ -68,6 +106,18 @@ def change_contact(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def delete_contact(args: list[str], book: AddressBook) -> str:
+   """Delete a contact by name.
+
+   Args:
+       args: Command arguments containing a contact name.
+       book: Address book storage.
+
+   Returns:
+       A status message indicating whether the contact was deleted.
+
+   Errors:
+       ValueError for missing name is converted by input_error.
+   """
    if not args:
         raise ValueError("Missing contact name. Use: delete [name]")
 
@@ -82,6 +132,18 @@ def delete_contact(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def delete_phone(args: list[str], book: AddressBook) -> str:
+    """Remove a phone number from a contact.
+
+    Args:
+        args: Command arguments in the format [name, phone].
+        book: Address book storage.
+
+    Returns:
+        A status message describing the deletion result.
+
+    Errors:
+        ValueError from invalid input or missing phone is converted by input_error.
+    """
     if len(args) < 2:
         raise ValueError("Invalid format. Use: delete-phone [name] [phone]")
     
@@ -97,10 +159,22 @@ def delete_phone(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def show_phone(args: list[str], book: AddressBook) -> str:
+    """Show all phone numbers for a contact.
+
+    Args:
+        args: Command arguments containing a contact name.
+        book: Address book storage.
+
+    Returns:
+        Formatted phone list or an explanatory message.
+
+    Errors:
+        ValueError for missing name is converted by input_error.
+    """
     if not args:
         raise ValueError("Missing contact name. Use: phone [name]")
         
-    name = " ".join(args) # об'єднує всі агременти в одне ім'я
+    name = " ".join(args) # join all arguments into a single name
     record = book.find(name)
     if record is None:
         return f"Contact {name} not found."
@@ -111,22 +185,74 @@ def show_phone(args: list[str], book: AddressBook) -> str:
     return f"{name}'s phones: {', '.join(str(p.value) for p in record.phones)}"
 
 
+_LABEL_WIDTH = max(len(label) for label in ("Contact name:", "Birthday:", "Phones:", "Address:", "Email:"))
+
+
+def _format_record(record: Record) -> str:
+    """Format a contact record for aligned multiline CLI output.
+
+    Args:
+        record: Contact record to render.
+
+    Returns:
+        A formatted multiline string with aligned labels and values.
+    """
+    def field(label: str, value: str) -> str:
+        return f"{label:<{_LABEL_WIDTH}} {value}"
+
+    colored_name = f"{Fore.GREEN}{record.name.value}{Style.RESET_ALL}"
+    block = [field("Contact name:", colored_name)]
+
+    if record.birthday:
+        block.append(field("Birthday:", str(record.birthday)))
+
+    phone_value = ", ".join(str(p.value) for p in record.phones) if record.phones else "no phones"
+    block.append(field("Phones:", phone_value))
+
+    if record.address:
+        block.append(field("Address:", str(record.address)))
+
+    if record.email:
+        block.append(field("Email:", str(record.email)))
+
+    return "\n".join(block)
+
+
 @input_error
 def show_all(_: list[str], book: AddressBook) -> str:
+    """Render all contacts from the address book.
+
+    Args:
+        _: Unused command arguments.
+        book: Address book storage.
+
+    Returns:
+        Formatted list of all contacts or a message if the book is empty.
+    """
     if not book.data:
         return "No contacts yet."
-    
-    lines = [str(record) for record in book.data.values()]
-    
-    return "\n".join(lines)
+
+    return "\n\n".join(_format_record(record) for record in book.data.values())
 
 
 @input_error
 def add_birthday(args: list[str], book: AddressBook) -> str:
+    """Attach a birthday to an existing contact.
+
+    Args:
+        args: Command arguments in the format [name, DD.MM.YYYY].
+        book: Address book storage.
+
+    Returns:
+        A status message describing the result.
+
+    Errors:
+        ValueError for invalid format, unknown contact, or invalid date is converted by input_error.
+    """
     if len(args) < 2:
         raise ValueError("Invalid format. Use: add-birthday [name] [DD.MM.YYYY]")
         
-    # Останній — date, все інше — ім'я
+    # last — date, everything else — name
     date_str = args[-1]
     name = " ".join(args[:-1])
     record = book.find(name)
@@ -139,6 +265,19 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def change_birthday(args: list[str], book: AddressBook) -> str:
+    """Replace an existing birthday for a contact.
+
+    Args:
+        args: Command arguments in the format [name, old_birthday, new_birthday].
+        book: Address book storage.
+
+    Returns:
+        A status message with update details.
+
+    Errors:
+        ValueError for invalid format or date parsing is converted by input_error.
+        Record-level ValueError is handled locally and returned as text.
+    """
     if len(args) < 3:
         raise ValueError("Invalid format. Use: change-birthday [name] [old_birthday] [new_birthday]")
     
@@ -162,6 +301,18 @@ def change_birthday(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def show_birthday(args: list[str], book: AddressBook) -> str:
+    """Show birthday for a given contact.
+
+    Args:
+        args: Command arguments containing a contact name.
+        book: Address book storage.
+
+    Returns:
+        Formatted birthday message or not-found message.
+
+    Errors:
+        ValueError for missing name is converted by input_error.
+    """
     if not args:
         raise ValueError("Missing contact name. Use: show-birthday [name]")
         
@@ -180,6 +331,18 @@ def show_birthday(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def birthdays(args: list[str], book: AddressBook) -> str:
+   """List upcoming birthdays for the next N days.
+
+   Args:
+       args: Command arguments containing one integer-like number of days.
+       book: Address book storage.
+
+   Returns:
+       Aligned multiline birthday report or an empty-result message.
+
+   Errors:
+       ValueError for missing or non-integer day count is converted by input_error.
+   """
    if not args:
         raise ValueError("Please provide the number of days. Use: birthdays [number]")
    
@@ -192,24 +355,47 @@ def birthdays(args: list[str], book: AddressBook) -> str:
    
    if not upcoming:
         return f"No upcoming birthdays within the next {number_of_days} days."
-   
+
+   sorted_upcoming = sorted(upcoming, key=lambda x: x["congratulation_date"])
+   name_header = "Name"
+   date_header = "Birthday"
+   name_width = max(len(name_header), *(len(item["name"]) for item in sorted_upcoming))
+   date_width = max(len(date_header), *(len(item["congratulation_date"]) for item in sorted_upcoming))
+
    birthday_lines = [f"Upcoming birthdays within the next {number_of_days} days:"]
-   for bd in upcoming:
-        birthday_lines.append(f"{bd['name']}: {bd['congratulation_date']}")
+   birthday_lines.append(f"{name_header:<{name_width}}  {date_header:<{date_width}}")
+   birthday_lines.append(f"{'-' * name_width}  {'-' * date_width}")
+
+   for bd in sorted_upcoming:
+       birthday_lines.append(
+          f"{bd['name']:<{name_width}}  {bd['congratulation_date']:<{date_width}}"
+       )
         
    return "\n".join(birthday_lines)
 
 
 @input_error
 def add_address(args: list[str], book: AddressBook) -> str:
+    """Add an address to a contact.
+
+    Args:
+        args: Command arguments in the format [name, "address with spaces"].
+        book: Address book storage.
+
+    Returns:
+        A status message describing the update.
+
+    Errors:
+        ValueError for invalid format, empty address, or missing contact is converted by input_error.
+    """
     if len(args) < 2:
         raise ValueError("Missing name or new address.")
     
-    # Об’єднуємо args навпаки в рядок для regex парсингу
+    # Join args to handle cases where name or address contains spaces. Assume the last argument is the address, and everything before it is the name.
     full_args_str = " ".join(args)
     
-    # # Використовуєм regex щоб дістати ім'я та адресу в лапках
-    # промпт: ім'я (любі символи крім ") + пробіл + "адреса" (в лапках)
+    # # Use regex to extract name and address in quotes
+    # prompt: name (any characters except ") + space + "address" (in quotes)
     match = re.match(r'^(.*?) "(.+?)"$', full_args_str.strip())
     if not match:
         raise ValueError("Invalid input format. Use: " " for address if it has spaces.")
@@ -231,13 +417,25 @@ def add_address(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def change_address(args: list[str], book: AddressBook) -> str:
+    """Replace an address for a contact.
+
+    Args:
+        args: Command arguments in the format [name, "new address"].
+        book: Address book storage.
+
+    Returns:
+        A status message with old and new address values.
+
+    Errors:
+        ValueError for invalid format, empty address, or missing contact is converted by input_error.
+    """
     if len(args) < 2:
         raise ValueError("Missing name or new address.")
  
     full_args_str = " ".join(args)
     
-    # Використовуєм regex щоб дістати ім'я та адресу в лапках
-    # промпт: ім'я (любі символи крім ") + пробіл + "адреса" (в лапках)
+    # Use regex to extract name and address in quotes
+    # prompt: name (any characters except ") + space + "address" (in quotes)
     match = re.match(r'^(.*?) "(.+?)"$', full_args_str.strip())
     if not match:
         raise ValueError("Invalid input format. Use: change-address [name] \"[new_address]\" with quotes for address if it has spaces.")
@@ -259,25 +457,48 @@ def change_address(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def delete_address(args: list[str], book: AddressBook) -> str:
-    if len(args) < 2:
-        raise ValueError("Invalid format. Use: delete-address [name] [address]")
-    
-    name = args[0]
-    address_to_delete = " ".join(args[1:])
-    
+    """Remove the address assigned to a contact.
+
+    Args:
+        args: Command arguments containing a contact name.
+        book: Address book storage.
+
+    Returns:
+        A status message describing deletion outcome.
+
+    Errors:
+        ValueError for invalid input or missing contact/address is converted by input_error.
+    """
+    if not args:
+        raise ValueError("Invalid format. Use: delete-address [name]")
+
+    name = " ".join(args)
+
     record = book.find(name)
     if record is None:
         raise ValueError(f"Contact '{name}' not found.")
-    
+
     try:
-        record.remove_address(address_to_delete)
-        return f"Address '{address_to_delete}' successfully removed from contact '{name}'."
+        record.remove_address()
+        return f"Address successfully removed from contact '{name}'."
     except ValueError as e:
         return str(e)
 
 @input_error
 def add_email(args: list[str], book: AddressBook) -> str:
-    # останній — email, все інше — ім'я
+    """Add an email to a contact.
+
+    Args:
+        args: Command arguments in the format [name, email].
+        book: Address book storage.
+
+    Returns:
+        A status message describing the update.
+
+    Errors:
+        ValueError for missing contact or invalid email is converted by input_error.
+    """
+    # last argument is the email, all others are the name
     email_str = args[-1]
     name = " ".join(args[:-1])
     record = book.find(name)
@@ -290,10 +511,22 @@ def add_email(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def change_email(args: list[str], book: AddressBook) -> str:
+    """Replace a contact email.
+
+    Args:
+        args: Command arguments in the format [name, new_email].
+        book: Address book storage.
+
+    Returns:
+        A status message with old and new email values.
+
+    Errors:
+        ValueError for missing contact or invalid email is converted by input_error.
+    """
     if len(args) < 2:
         raise ValueError("Missing name or new email.")
     
-    # якщо подвійне ім'я або + прізвище або пробіли: arg[-1] — email, все інше — name
+    # if it's a double name or has a surname or spaces: arg[-1] — email, everything else — name
     new_email = args[-1]
     name = " ".join(args[:-1])
     
@@ -308,10 +541,23 @@ def change_email(args: list[str], book: AddressBook) -> str:
 
 @input_error
 def delete_email(args: list[str], book: AddressBook) -> str:
+    """Delete a specific email from a contact.
+
+    Args:
+        args: Command arguments in the format [name, email].
+        book: Address book storage.
+
+    Returns:
+        A status message describing deletion result.
+
+    Errors:
+        ValueError for invalid input is converted by input_error.
+        Record-level ValueError is handled locally and returned as text.
+    """
     if len(args) < 2:
         raise ValueError("Invalid format. Use: delete-email [name] [email]")
     
-    # останній — email, все інше — name
+    # last argument is the email, all others are the name
     email_to_delete = args[-1]
     name = " ".join(args[:-1])
     
@@ -327,10 +573,22 @@ def delete_email(args: list[str], book: AddressBook) -> str:
     
 @input_error
 def search_contacts(args: list[str], book: AddressBook) -> str:
+    """Search contacts by keyword across multiple fields.
+
+    Args:
+        args: Command arguments containing one or more words as keyword.
+        book: Address book storage.
+
+    Returns:
+        A formatted list of matched contacts or an empty-result message.
+
+    Errors:
+        ValueError for empty keyword is converted by input_error.
+    """
     if not args:
         raise ValueError("Please provide a keyword to search. Use: search [keyword]")
     
-    # Якщо користувач ввів кілька слів (наприклад, "search John Doe"), склеюємо їх в один рядок
+    # If the user provided multiple words (e.g., "search John Doe"), join them into a single string
     keyword = " ".join(args)
     
     found_records = book.search_contacts(keyword)
@@ -339,8 +597,6 @@ def search_contacts(args: list[str], book: AddressBook) -> str:
         return f"No contacts found matching '{keyword}'."
     
     result_lines = [f"Found {len(found_records)} contact(s) matching '{keyword}':"]
-    
-    for record in found_records:
-        result_lines.append(str(record))
-        
-    return "\n".join(result_lines)
+    result_lines.extend(_format_record(record) for record in found_records)
+
+    return "\n\n".join(result_lines)

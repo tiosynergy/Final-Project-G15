@@ -6,8 +6,29 @@ from typing import Any
 
 
 def input_error(func: Callable[..., str]) -> Callable[..., str]:
+    """Wrap command handlers and map exceptions to user-friendly messages.
+
+    Args:
+        func: Command handler function returning a string response.
+
+    Returns:
+        Wrapped handler that catches expected exceptions and returns readable text.
+
+    Errors:
+        ValueError, IndexError, and KeyError are handled and transformed.
+        Unexpected exceptions are returned as "Error: ...".
+    """
     @wraps(func)
     def inner(*args: Any, **kwargs: Any) -> str:
+        """Execute wrapped handler with standardized error mapping.
+
+        Args:
+            *args: Positional arguments for wrapped function.
+            **kwargs: Keyword arguments for wrapped function.
+
+        Returns:
+            Handler result or mapped error message.
+        """
         try:
             return func(*args, **kwargs)
         except (ValueError, IndexError, KeyError) as error:
