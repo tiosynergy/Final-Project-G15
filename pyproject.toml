@@ -1,0 +1,16 @@
+[project]
+name = "assistant-bot"
+version = "0.1.0"
+description = "CLI Assistant Bot for contacts and notes"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "colorama>=0.4.6",
+]
+
+[project.scripts]
+assistant-bot = "assistant_bot.main:main"   # ← головне!
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["assistant_bot*"]
