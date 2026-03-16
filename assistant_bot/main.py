@@ -238,7 +238,7 @@ def main() -> None:
 
         handler = COMMANDS.get(command)
         if handler is None:
-            suggestion = _get_closest_command(command) # Шукаємо схожу
+            suggestion = _get_closest_command(command) # find a close match for the command
             if suggestion:
                 _bot_print(f"Invalid command. Maybe you meant: {Fore.YELLOW}'{suggestion}'{Style.RESET_ALL}?")
             else:

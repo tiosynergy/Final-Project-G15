@@ -56,7 +56,7 @@ def input_error(func: Callable[..., str]) -> Callable[..., str]:
             
             return "Give me name and correct data please."
         
-        except Exception as error:  # noqa: BLE001
+        except Exception as error:
             return f"Error: {str(error)}"
 
     return inner
