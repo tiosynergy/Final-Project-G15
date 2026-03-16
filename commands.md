@@ -26,7 +26,7 @@
 ## 3. Валідація
 Автоматична. Приклади помилок:  
 `add Ivan 123` → Phone number must be 10 digits.  
-`add-email Ivan Ivan@invalid` → Invalid email format...
+`add-email Petro Kozak Ivan@invalid` → Invalid email format...
 
 ## 4. Пошук контактів
 - `search <keyword>`  
