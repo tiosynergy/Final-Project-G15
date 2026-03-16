@@ -175,7 +175,7 @@ Enter a command:
 | `add-email <name> <email>`                   | Add an email to a contact                                                                         |
 | `change-email <name> <email>`                | Update the email of a contact                                                                        |
 | `delete-email <name> <email>`                |Delete a specific email from a contact                                                                        |
-| `change-name <old_name> | <new_name>`          |Rename an existing contact                                                                         |
+| `change-name <old_name> | <new_name>`        |Rename an existing contact                                                                         |
 | `delete <name>`                              |Completely delete a contact (supports names with spaces)                                                              |
 | `delete-phone <name> <phone>`                |Remove a specific phone number from a contact                                                                          |
 | `birthdays` <n>                              | Display upcoming birthdays for n days                                                                             |
@@ -443,7 +443,7 @@ Contacts:
   search <keyword>                                       Find a record by keyword
   delete-phone <name> <phone>                            Delete the phone number of a contact
   phone <name>                                           Show all phone numbers of a contact
-  change-name <old_name> | <new_name>                      Update contact name
+  change-name <old_name> | <new_name>                    Update contact name
   add-birthday <name> <DD.MM.YYYY>                       Add a birthday to a contact
   change-birthday <name> <old_birthday> <new_birthday>   Replace an existing birthday (date format: DD.MM.YYYY)
   show-birthday <name>                                   Show the birthday of a contact
