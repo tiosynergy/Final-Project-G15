@@ -30,7 +30,7 @@
 
 ## 4. Пошук контактів
 - `search <keyword>`  
-  Приклад: `search Petro` / `search Khreshchatyk`
+  Приклад: `search Petro`
 
 ## 5. Редагування та видалення контактів
 Приклад: `change-name Petro Kozak | Petro`
