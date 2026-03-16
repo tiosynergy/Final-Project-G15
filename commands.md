@@ -4,7 +4,7 @@
 -  `assistant-bot`
 
 - `Неправильна команда`
-Приклад: `addsd`
+Приклад: `addf Petro Kozak 0501234567`
 
 ## 1. Зберігати контакти
 - `add <name> [phone]`  
