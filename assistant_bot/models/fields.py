@@ -48,7 +48,9 @@ class Address(Field):
         """
         if not isinstance(value, str) or not value.strip():
             raise ValueError("Address cannot be empty")
-        super().__init__(value)
+
+        formatted_address = value.strip().title()
+        super().__init__(formatted_address)
 
 
 class Email(Field):
@@ -82,7 +84,7 @@ class Phone(Field):
             Raises ValueError if phone is not 10 digits.
         """
         if not (value.isdigit() and len(value) == 10):
-            raise ValueError("10")
+            raise ValueError("Phone must contain 10 digits")
         super().__init__(value)
 
 

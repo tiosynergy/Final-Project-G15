@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import difflib
+
 from collections.abc import Callable
 
 from colorama import Fore, Style, init as colorama_init
@@ -135,6 +137,15 @@ def _bot_print(message: str) -> None:
     # Print bot replies with a leading empty line for better CLI readability.
     print(f"\n{message}")
 
+def _get_closest_command(command: str) -> str | None:
+    """Find the closest matching command from the dictionary keys."""
+    
+    available_commands = list(COMMANDS.keys()) + ["hello", "help", "exit", "close"]
+    
+    # (cutoff 0.6 means 60% similarity)
+    matches = difflib.get_close_matches(command, available_commands, n=1, cutoff=0.6)
+    return matches[0] if matches else None
+
 
 def main() -> None:
     """Run the interactive assistant bot loop.
@@ -178,7 +189,7 @@ def main() -> None:
                         ("search <keyword>", "Find a record by keyword"),
                         ("delete-phone <name> <phone>", "Delete the phone number of a contact"),
                         ("phone <name>", "Show all phone numbers of a contact"),
-                        ("change-name <old_name> <new_name>", "Update contact name"),
+                        ("change-name <old_name> | <new_name>", "Update contact name"),
                         ("add-birthday <name> <DD.MM.YYYY>", "Add a birthday to a contact"),
                         ("change-birthday <name> <old_birthday> <new_birthday>", "Replace an existing birthday (date format: DD.MM.YYYY)"),
                         ("show-birthday <name>", "Show the birthday of a contact"),
@@ -227,9 +238,14 @@ def main() -> None:
 
         handler = COMMANDS.get(command)
         if handler is None:
-            _bot_print("Invalid command.")
+            suggestion = _get_closest_command(command) # Шукаємо схожу
+            if suggestion:
+                _bot_print(f"Invalid command. Maybe you meant: {Fore.YELLOW}'{suggestion}'{Style.RESET_ALL}?")
+            else:
+                _bot_print(f"Invalid command. Type {Fore.YELLOW}'help'{Style.RESET_ALL} to see available commands.")
             continue
 
+        #if command is correct
         _bot_print(handler(args, book, notes))
 
 
