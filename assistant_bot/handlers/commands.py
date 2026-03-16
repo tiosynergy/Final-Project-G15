@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import cast
 import re
 from colorama import Fore, Style
 
