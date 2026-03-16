@@ -65,6 +65,7 @@ class Email(Field):
         Errors:
             Raises ValueError if email format is invalid.
         """
+        # Simple regex for basic email validation
         email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
         if not re.match(email_regex, value):
             raise ValueError("Invalid email format. Use example@domain.com")

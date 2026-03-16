@@ -279,7 +279,7 @@ def change_birthday(args: list[str], book: AddressBook) -> str:
     old_birthday = args[-2]
     name = " ".join(args[:-2]).strip()
 
-    # Перевіряємо, чи є обидва аргументи датами
+    # Check if both arguments are valid dates
     date_pattern = r"^\d{2}\.\d{2}\.\d{4}$"
     if not re.match(date_pattern, old_birthday) or not re.match(date_pattern, new_birthday):
         raise ValueError(f"Invalid dates. Usage: change-birthday {name} DD.MM.YYYY DD.MM.YYYY")
@@ -315,7 +315,6 @@ def show_birthday(args: list[str], book: AddressBook) -> str:
     if not args:
         raise ValueError("Missing contact name. Use: show-birthday [name]")
         
-    # name = args[0]
     name = " ".join(args)
     record = book.find(name)
 
