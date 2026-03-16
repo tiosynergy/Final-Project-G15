@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
-from typing import Any
+from datetime import datetime
 
 from assistant_bot.models.address_book import AddressBook
 
